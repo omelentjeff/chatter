@@ -1,4 +1,4 @@
-package com.omelentjeff.chatApp.user;
+package com.omelentjeff.chatApp.models;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.omelentjeff.chatApp.user;
+package com.omelentjeff.chatApp.models;
 
 public enum Role {
 
