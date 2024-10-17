@@ -2,6 +2,7 @@ package com.omelentjeff.chatApp.auth;
 
 import com.omelentjeff.chatApp.dto.AuthenticationResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -19,7 +20,7 @@ public class AuthenticationController {
     public ResponseEntity<AuthenticationResponse> register(
             @RequestBody RegisterRequest request
     ) {
-
+        return ResponseEntity.ok(service.register(request));
     }
 
     @PostMapping("/authenticate")
