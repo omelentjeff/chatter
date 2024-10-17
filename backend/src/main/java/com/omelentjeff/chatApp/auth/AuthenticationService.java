@@ -2,6 +2,7 @@ package com.omelentjeff.chatApp.auth;
 
 import com.omelentjeff.chatApp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Service;
 public class AuthenticationService {
 
     private final UserRepository repository;
+    private final PasswordEncoder passwordEncoder;
 
     public AuthenticationResponse register(RegisterRequest request) {
         return null;
