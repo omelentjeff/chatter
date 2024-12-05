@@ -1,5 +1,6 @@
 package com.omelentjeff.chatApp.auth;
 
+import com.omelentjeff.chatApp.exception.UsernameAlreadyInUseException;
 import com.omelentjeff.chatApp.models.Role;
 import com.omelentjeff.chatApp.models.UserEntity;
 import com.omelentjeff.chatApp.repositories.UserRepository;
@@ -20,7 +21,9 @@ public class AuthenticationService {
     private final AuthenticationManager authenticationManager;
 
     public AuthenticationResponse register(RegisterRequest request) {
-        // TODO checkkaa onko käyttäjätiedot jo olemassa, jos on niin heitä usernameAlreadyInUse
+        if (repository.findByUsername(request.getUsername()).isPresent()) {
+            throw new UsernameAlreadyInUseException("Username is already taken");
+        }
 
         var user = UserEntity.builder()
                 .username(request.getUsername())
