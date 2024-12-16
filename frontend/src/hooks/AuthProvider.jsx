@@ -18,8 +18,7 @@ export const AuthProvider = ({ children }) => {
     if (storedToken) {
       const decodedToken = jwtDecode(storedToken);
       setUsername(decodedToken.sub);
-      setRole(decodedToken.role[0].authority);
-      console.log("Role:", decodedToken.role[0].authority);
+      //setRole(decodedToken.role[0].authority || "USER");
     }
   }, []);
 
@@ -63,7 +62,7 @@ export const AuthProvider = ({ children }) => {
       if (response.data.token) {
         const decodedToken = jwtDecode(response.data.token);
         setUsername(decodedToken.sub);
-        setRole(decodedToken.role[0].authority || "USER");
+        //setRole(decodedToken.role[0].authority || "USER");
         setToken(response.data.token);
         localStorage.setItem("token", response.data.token);
         return response.data;
