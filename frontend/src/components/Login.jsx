@@ -12,10 +12,73 @@ import {
   IconButton,
   InputAdornment,
   CircularProgress,
+  Divider,
 } from "@mui/material";
-import { LockOutlined, Visibility, VisibilityOff } from "@mui/icons-material";
+import {
+  LockOutlined,
+  Visibility,
+  VisibilityOff,
+  GitHub,
+  Google,
+  Facebook,
+} from "@mui/icons-material";
 import { Link as RouterLink, useNavigate } from "react-router-dom";
 import { useAuth } from "../hooks/AuthProvider";
+
+// Reusable Social Login Button Component
+const SocialLoginButton = ({ provider, color, icon, onClick }) => {
+  return (
+    <Button
+      fullWidth
+      variant="contained"
+      sx={{
+        mb: 2,
+        backgroundColor: color,
+        color: "#fff",
+        textTransform: "none",
+        display: "flex",
+        justifyContent: "flex-start", // Align content to the left
+        alignItems: "center",
+        padding: "8px 12px",
+        "&:hover": { backgroundColor: darkenColor(color) },
+      }}
+      onClick={() => onClick(provider)}
+    >
+      {/* Icon on the left */}
+      <Box sx={{ display: "flex", alignItems: "center" }}>
+        {icon}
+        {/* Vertical Line */}
+        <Divider
+          orientation="vertical"
+          flexItem
+          sx={{
+            height: "inherit",
+            width: "1px",
+            backgroundColor: "#fff",
+            marginLeft: 2,
+            marginRight: 2,
+          }}
+        />
+      </Box>
+      {/* Text Content */}
+      <Typography variant="body1" sx={{ flexGrow: 1, textAlign: "start" }}>
+        Continue with {provider}
+      </Typography>
+    </Button>
+  );
+};
+
+// Utility function to darken colors for hover effect
+const darkenColor = (color) => {
+  const factor = 0.9;
+  return color.replace(
+    /(\d+),(\d+),(\d+)/,
+    (_, r, g, b) =>
+      `${Math.round(r * factor)},${Math.round(g * factor)},${Math.round(
+        b * factor
+      )}`
+  );
+};
 
 export default function Login() {
   const [showPassword, setShowPassword] = useState(false);
@@ -25,16 +88,14 @@ export default function Login() {
   const navigate = useNavigate();
   const { authenticate } = useAuth();
 
+  // Form Submit Logic
   const handleSubmit = async (event) => {
     event.preventDefault();
     setErrorMessage("");
     setLoading(true);
-    console.log("Form data:", formData);
 
     try {
       const response = await authenticate(formData.username, formData.password);
-      console.log("Response:", response);
-
       if (response.token) {
         alert("Login successful");
       }
@@ -43,6 +104,12 @@ export default function Login() {
     } finally {
       setLoading(false);
     }
+  };
+
+  // Social Login Handler
+  const handleSocialLogin = (provider) => {
+    alert(`Redirecting to ${provider} login...`);
+    // Implement actual social login logic
   };
 
   return (
@@ -56,13 +123,14 @@ export default function Login() {
           alignItems: "center",
         }}
       >
-        <Avatar sx={{ m: 1, bgcolor: "secondary.main" }}>
-          <LockOutlined />
-        </Avatar>
-        <Typography component="h1" variant="h5">
-          Sign in
+        <Typography component="h1" variant="h5" sx={{ textAlign: "start" }}>
+          Login
         </Typography>
+
+        {/* Error Message */}
         {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+
+        {/* Login Form */}
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
           <TextField
             margin="normal"
@@ -118,6 +186,29 @@ export default function Login() {
             </Grid>
           </Grid>
         </Box>
+
+        {/* Divider */}
+        <Divider sx={{ width: "100%", my: 3 }}>OR</Divider>
+
+        {/* Social Login Buttons */}
+        <SocialLoginButton
+          provider="GitHub"
+          color="rgb(36,41,46)" // GitHub black
+          icon={<GitHub />}
+          onClick={handleSocialLogin}
+        />
+        <SocialLoginButton
+          provider="Google"
+          color="rgb(219,68,55)" // Google red
+          icon={<Google />}
+          onClick={handleSocialLogin}
+        />
+        <SocialLoginButton
+          provider="Facebook"
+          color="rgb(24,119,242)" // Facebook blue
+          icon={<Facebook />}
+          onClick={handleSocialLogin}
+        />
       </Box>
     </Container>
   );
