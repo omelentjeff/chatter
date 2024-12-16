@@ -97,7 +97,8 @@ export default function Login() {
     try {
       const response = await authenticate(formData.username, formData.password);
       if (response.token) {
-        alert("Login successful");
+        console.log("token:", response.token);
+        navigate("/home");
       }
     } catch (error) {
       setErrorMessage("Invalid username or password");
