@@ -32,11 +32,14 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (response.data.token) {
+        console.log("Token:", response.data.token);
         const decodedToken = jwtDecode(response.data.token);
+        console.log("Decoded token:", decodedToken);
+
         setUsername(decodedToken.sub);
-        setRole(decodedToken.role[0].authority);
+        //setRole(decodedToken.role[0].authority);
         setToken(response.data.token);
-        localStorage.setItem("token", response.data.token);
+        console.log(response.data);
         return response.data;
       }
 
