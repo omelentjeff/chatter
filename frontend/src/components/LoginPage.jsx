@@ -15,7 +15,7 @@ export default function LoginPage() {
         item
         xs={8}
         sx={{
-          background: "linear-gradient(to right, #396afc, #2948ff)", // Corrected linear-gradient syntax
+          background: "linear-gradient(to right, #56CCF2, #2F80ED)", // Corrected linear-gradient syntax
           display: "flex",
           alignItems: "start",
           justifyContent: "center",
