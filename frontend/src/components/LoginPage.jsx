@@ -2,6 +2,11 @@
 import React from "react";
 import { Grid, Box, Typography } from "@mui/material";
 import Login from "./Login";
+import bg from "../assets/bg.jpg";
+
+// background: #ff9966;  /* fallback for old browsers */
+// background: -webkit-linear-gradient(to right, #ff5e62, #ff9966);  /* Chrome 10-25, Safari 5.1-6 */
+// background: linear-gradient(to right, #ff5e62, #ff9966); /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
 
 export default function LoginPage() {
   return (
@@ -11,14 +16,13 @@ export default function LoginPage() {
         item
         xs={8}
         sx={{
-          backgroundImage: "url('/assets/bg.jpg')",
-          backgroundSize: "cover",
-          backgroundPosition: "center",
+          background: "linear-gradient(to right, #ff9966, #ff5e62)", // Corrected linear-gradient syntax
           display: "flex",
-          alignItems: "center",
+          alignItems: "start",
           justifyContent: "center",
-          color: "black",
+          color: "white",
           padding: 4,
+          paddingTop: 20,
         }}
       >
         <Box textAlign="center">
@@ -39,8 +43,10 @@ export default function LoginPage() {
           display: "flex",
           alignItems: "start",
           justifyContent: "center",
-          backgroundColor: "white",
+          backgroundColor: "#f7f7f7",
           padding: 4,
+          paddingLeft: 0,
+          paddingTop: 0,
         }}
       >
         <Login />
