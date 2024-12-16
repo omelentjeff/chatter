@@ -2,7 +2,6 @@
 import React from "react";
 import { Grid, Box, Typography } from "@mui/material";
 import Login from "./Login";
-import bg from "../assets/bg.jpg";
 
 // background: #ff9966;  /* fallback for old browsers */
 // background: -webkit-linear-gradient(to right, #ff5e62, #ff9966);  /* Chrome 10-25, Safari 5.1-6 */
@@ -16,7 +15,7 @@ export default function LoginPage() {
         item
         xs={8}
         sx={{
-          background: "linear-gradient(to right, #ff9966, #ff5e62)", // Corrected linear-gradient syntax
+          background: "linear-gradient(to right, #396afc, #2948ff)", // Corrected linear-gradient syntax
           display: "flex",
           alignItems: "start",
           justifyContent: "center",
