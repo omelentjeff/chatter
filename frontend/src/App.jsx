@@ -3,6 +3,7 @@ import LoginPage from "./components/LoginPage";
 import Signup from "./components/Signup";
 import MyAppBar from "./components/MyAppBar";
 import Home from "./components/Home";
+import ProtectedRoute from "./components/ProtectedRoute";
 import { AuthProvider, useAuth } from "./hooks/AuthProvider";
 
 function App() {
@@ -16,16 +17,17 @@ function App() {
 }
 
 function AppLayout() {
-  const { token } = useAuth(); // Assume `user` is null when not authenticated
-  console.log("User", token);
+  const { token } = useAuth();
 
   return (
     <>
-      {token && <MyAppBar />} {/* Show AppBar only if user is authenticated */}
+      {token && <MyAppBar />}
       <Routes>
         <Route path="/" element={<LoginPage />} />
         <Route path="/signup" element={<Signup />} />
-        <Route path="/home" element={<Home />} />
+        <Route element={<ProtectedRoute />}>
+          <Route path="/home" element={<Home />} />
+        </Route>
       </Routes>
     </>
   );
