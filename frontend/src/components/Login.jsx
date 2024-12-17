@@ -97,7 +97,6 @@ export default function Login() {
     try {
       const response = await authenticate(formData.username, formData.password);
       if (response.token) {
-        console.log("token:", response.token);
         navigate("/home");
       }
     } catch (error) {

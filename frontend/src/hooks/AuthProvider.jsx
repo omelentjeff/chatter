@@ -23,7 +23,6 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const authenticate = async (username, password) => {
-    console.log(API_URL);
     try {
       const response = await axios.post(`${API_URL}/auth/authenticate`, {
         username,
@@ -31,14 +30,12 @@ export const AuthProvider = ({ children }) => {
       });
 
       if (response.data.token) {
-        console.log("token", localStorage.getItem("token"));
         const decodedToken = jwtDecode(response.data.token);
 
         setUsername(decodedToken.sub);
         //setRole(decodedToken.role[0].authority);
         setToken(response.data.token);
         localStorage.setItem("token", response.data.token);
-        console.log(response.data);
         return response.data;
       }
 
