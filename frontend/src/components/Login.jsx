@@ -62,7 +62,7 @@ const SocialLoginButton = ({ provider, color, icon, onClick }) => {
       </Box>
       {/* Text Content */}
       <Typography variant="body1" sx={{ flexGrow: 1, textAlign: "start" }}>
-        Continue with {provider}
+        Sign In With {provider}
       </Typography>
     </Button>
   );
@@ -109,7 +109,7 @@ export default function Login() {
 
   // Social Login Handler
   const handleSocialLogin = (provider) => {
-    alert(`Redirecting to ${provider} login...`);
+    console.log(`Redirecting to ${provider} login...`);
     // Implement actual social login logic
   };
 
@@ -129,7 +129,11 @@ export default function Login() {
         </Typography>
 
         {/* Error Message */}
-        {errorMessage && <Typography color="error">{errorMessage}</Typography>}
+        {errorMessage && (
+          <Typography color="error" sx={{ marginTop: 2 }}>
+            {errorMessage}
+          </Typography>
+        )}
 
         {/* Login Form */}
         <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
