@@ -4,6 +4,7 @@ import Signup from "./components/Signup";
 import MyAppBar from "./components/MyAppBar";
 import Home from "./components/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 import { AuthProvider, useAuth } from "./hooks/AuthProvider";
 
 function App() {
@@ -23,8 +24,25 @@ function AppLayout() {
     <>
       {token && <MyAppBar />}
       <Routes>
-        <Route path="/" element={<LoginPage />} />
-        <Route path="/signup" element={<Signup />} />
+        {/* Public routes guarded for authenticated users */}
+        <Route
+          path="/"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            <PublicRoute>
+              <Signup />
+            </PublicRoute>
+          }
+        />
+
+        {/* Private routes guarded for unauthenticated users */}
         <Route element={<ProtectedRoute />}>
           <Route path="/home" element={<Home />} />
         </Route>
