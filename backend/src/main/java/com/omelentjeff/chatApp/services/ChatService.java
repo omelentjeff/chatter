@@ -8,6 +8,7 @@ import com.omelentjeff.chatApp.repositories.UserChatRepository;
 import com.omelentjeff.chatApp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,6 +20,7 @@ public class ChatService {
     private final UserRepository userRepository;
     private final UserChatRepository userChatRepository;
 
+    @Transactional
     public Chat save(Chat chat, List<Integer> userIds) {
 
         Chat savedChat = chatRepository.save(chat);
