@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/chats")
@@ -17,8 +19,8 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping
-    public ResponseEntity<Chat> createChat(@RequestBody Chat chat) {
-        Chat savedChat = chatService.save(chat);
+    public ResponseEntity<Chat> createChat(@RequestBody Chat chat, List<Integer> userIds) {
+        Chat savedChat = chatService.save(chat, userIds);
         return ResponseEntity.ok(savedChat);
     }
 }
