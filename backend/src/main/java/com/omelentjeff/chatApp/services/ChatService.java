@@ -2,7 +2,9 @@ package com.omelentjeff.chatApp.services;
 
 import com.omelentjeff.chatApp.dto.ChatDTO;
 import com.omelentjeff.chatApp.dto.CreateChatRequest;
+import com.omelentjeff.chatApp.dto.UserDTO;
 import com.omelentjeff.chatApp.mapper.ChatMapper;
+import com.omelentjeff.chatApp.mapper.UserMapper;
 import com.omelentjeff.chatApp.models.Chat;
 import com.omelentjeff.chatApp.models.UserChat;
 import com.omelentjeff.chatApp.models.UserEntity;
@@ -24,11 +26,29 @@ public class ChatService {
     private final UserRepository userRepository;
     private final UserChatRepository userChatRepository;
     private final ChatMapper chatMapper;
+    private final UserMapper userMapper;
 
     public ChatDTO findById(Long id) {
         Chat tempChat = chatRepository.findById(id).orElseThrow();
 
         return chatMapper.toChatDTO(tempChat);
+    }
+
+    public UserDTO findRecipientByChatId(Long chatId, Integer senderId) {
+
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new RuntimeException("Chat not found"));
+
+        List<UserEntity> users = chat.getUserChats().stream()
+                .map(UserChat::getUser)
+                .toList();
+
+        UserEntity recipient = users.stream()
+                .filter(user -> !user.getId().equals(senderId))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Recipient not found"));
+
+        // Map the recipient user to a UserDTO
+        return userMapper.toDTO(recipient);
     }
 
     @Transactional
