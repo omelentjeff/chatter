@@ -9,6 +9,7 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [username, setUsername] = useState(null);
   const [role, setRole] = useState(null);
+  const [userId, setUserId] = useState(null);
   const [token, setToken] = useState("");
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
@@ -19,6 +20,7 @@ export const AuthProvider = ({ children }) => {
       setToken(storedToken);
       const decodedToken = jwtDecode(storedToken);
       setUsername(decodedToken.sub);
+      setUserId(decodedToken.id);
       //setRole(decodedToken.role[0].authority || "USER");
     }
   }, []);
@@ -36,6 +38,8 @@ export const AuthProvider = ({ children }) => {
         setUsername(decodedToken.sub);
         //setRole(decodedToken.role[0].authority);
         setToken(response.data.token);
+        setUserId(decodedToken.id);
+        console.log("userId", userId);
         localStorage.setItem("token", response.data.token);
         return response.data;
       }
