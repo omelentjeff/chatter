@@ -18,4 +18,15 @@ public class GlobalExceptionHandler {
                 .build();
         return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
     }
+
+    @ExceptionHandler(ChatNotFoundException.class)
+    public ResponseEntity<ErrorResponse> handleChatNotFound(ChatNotFoundException ex) {
+        var error = ErrorResponse
+                .builder()
+                .status(HttpStatus.BAD_REQUEST.value())
+                .message(ex.getMessage())
+                .timeStamp(System.currentTimeMillis())
+                .build();
+        return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
+    }
 }
