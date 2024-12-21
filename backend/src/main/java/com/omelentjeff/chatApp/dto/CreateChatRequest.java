@@ -10,8 +10,6 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateChatRequest {
-
-    private String chatName;
     private boolean isGroup;
     private List<Integer> userIds;
 }
