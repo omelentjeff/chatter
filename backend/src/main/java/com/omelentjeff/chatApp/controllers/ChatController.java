@@ -1,5 +1,6 @@
 package com.omelentjeff.chatApp.controllers;
 
+import com.omelentjeff.chatApp.dto.ChatDTO;
 import com.omelentjeff.chatApp.dto.CreateChatRequest;
 import com.omelentjeff.chatApp.models.Chat;
 import com.omelentjeff.chatApp.services.ChatService;
@@ -20,8 +21,8 @@ public class ChatController {
     private final ChatService chatService;
 
     @PostMapping
-    public ResponseEntity<Chat> createChat(@RequestBody CreateChatRequest createChatRequest) {
-        Chat savedChat = chatService.save(createChatRequest);
+    public ResponseEntity<ChatDTO> createChat(@RequestBody CreateChatRequest createChatRequest) {
+        ChatDTO savedChat = chatService.save(createChatRequest);
         return ResponseEntity.ok(savedChat);
     }
 }
