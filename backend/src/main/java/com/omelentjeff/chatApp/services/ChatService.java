@@ -4,6 +4,7 @@ import com.omelentjeff.chatApp.dto.ChatDTO;
 import com.omelentjeff.chatApp.dto.CreateChatRequest;
 import com.omelentjeff.chatApp.dto.UserDTO;
 import com.omelentjeff.chatApp.exception.ChatNotFoundException;
+import com.omelentjeff.chatApp.exception.UserNotFoundException;
 import com.omelentjeff.chatApp.mapper.ChatMapper;
 import com.omelentjeff.chatApp.mapper.UserMapper;
 import com.omelentjeff.chatApp.models.Chat;
@@ -46,7 +47,7 @@ public class ChatService {
         UserEntity recipient = users.stream()
                 .filter(user -> !user.getId().equals(senderId))
                 .findFirst()
-                .orElseThrow(() -> new RuntimeException("Recipient not found"));
+                .orElseThrow(() -> new UserNotFoundException("User not found with"));
 
         // Map the recipient user to a UserDTO
         return userMapper.toDTO(recipient);

@@ -4,6 +4,8 @@ import com.omelentjeff.chatApp.dto.ChatDTO;
 import com.omelentjeff.chatApp.dto.CreateMessageRequest;
 import com.omelentjeff.chatApp.dto.MessageDTO;
 import com.omelentjeff.chatApp.dto.UserDTO;
+import com.omelentjeff.chatApp.exception.ChatNotFoundException;
+import com.omelentjeff.chatApp.exception.UserNotFoundException;
 import com.omelentjeff.chatApp.mapper.ChatMapper;
 import com.omelentjeff.chatApp.mapper.MessageMapper;
 import com.omelentjeff.chatApp.mapper.UserMapper;
@@ -59,9 +61,9 @@ public class MessageService {
 
 
     public MessageDTO save(CreateMessageRequest createMessageRequest) {
-        Chat foundChat = chatRepository.findById(createMessageRequest.getChatId()).orElse(null);
+        Chat foundChat = chatRepository.findById(createMessageRequest.getChatId()).orElseThrow(() -> new ChatNotFoundException("Chat not found"));
 
-        UserEntity sender = userRepository.findById(createMessageRequest.getSenderId()).orElse(null);
+        UserEntity sender = userRepository.findById(createMessageRequest.getSenderId()).orElseThrow(() -> new UserNotFoundException("User not found with id"));
 
         var message = Message.builder()
                         .chat(foundChat)
@@ -76,7 +78,7 @@ public class MessageService {
         UserEntity recipient = users.stream()
                 .filter(user -> !user.equals(sender))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new UserNotFoundException("User not found"));
 
         UserDTO senderDTO = userMapper.toDTO(sender);
         UserDTO recipientDTO = userMapper.toDTO(recipient);
