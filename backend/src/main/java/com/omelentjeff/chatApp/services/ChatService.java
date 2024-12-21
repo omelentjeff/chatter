@@ -24,6 +24,11 @@ public class ChatService {
     private final UserChatRepository userChatRepository;
     private final ChatMapper chatMapper;
 
+    public ChatDTO findById(Long id) {
+        Chat tempChat = chatRepository.findById(id).orElseThrow();
+        return chatMapper.toChatDTO(tempChat);
+    }
+
     @Transactional
     public ChatDTO save(CreateChatRequest createChatRequest) {
 
