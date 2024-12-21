@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,21 +27,39 @@ public class ChatService {
 
     public ChatDTO findById(Long id) {
         Chat tempChat = chatRepository.findById(id).orElseThrow();
-        return chatMapper.toChatDTO(tempChat);
+
+        List<Integer> userIds = tempChat.getUserChats().stream()
+                .map(userChat -> userChat.getUser().getId())
+                .toList();
+
+        return ChatDTO.builder()
+                .chatId(tempChat.getChatId())
+                .chatName(tempChat.getChatName())
+                .isGroup(tempChat.isGroup())
+                .userIds(userIds)
+                .build();
     }
 
     @Transactional
     public ChatDTO save(CreateChatRequest createChatRequest) {
 
+        List<UserEntity> users = userRepository.findAllById(createChatRequest.getUserIds());
+
+        // Dynamically generate the chat name based on usernames
+        String chatName = users.stream()
+                .map(UserEntity::getUsername)
+                .sorted()
+                .collect(Collectors.joining("_"));
+
+        // Create and save the chat with the generated chatName
         var tempChat = Chat.builder()
-                .chatName(createChatRequest.getChatName())
+                .chatName(chatName)
                 .isGroup(createChatRequest.isGroup())
                 .build();
 
         Chat savedChat = chatRepository.save(tempChat);
 
-        List<UserEntity> users = userRepository.findAllById(createChatRequest.getUserIds());
-
+        // Save user-chat relationships
         for (UserEntity user : users) {
             UserChat userChat = new UserChat();
             userChat.setChat(savedChat);
@@ -48,11 +67,12 @@ public class ChatService {
             userChatRepository.save(userChat);
         }
 
-       return ChatDTO.builder()
+        return ChatDTO.builder()
                 .chatId(savedChat.getChatId())
-                .chatName(savedChat.getChatName())
+                .chatName(chatName)
                 .isGroup(savedChat.isGroup())
                 .userIds(createChatRequest.getUserIds())
                 .build();
     }
+
 }
