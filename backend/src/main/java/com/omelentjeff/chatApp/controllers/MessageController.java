@@ -18,8 +18,8 @@ public class MessageController {
     private final MessageService messageService;
 
     @GetMapping("/chat/{chatId}")
-    public ResponseEntity<List<Message>> getMessagesByChatId(@PathVariable Long chatId) {
-        List<Message> messages = messageService.findByChatId(chatId);
+    public ResponseEntity<List<MessageDTO>> getMessagesByChatId(@PathVariable Long chatId) {
+        List<MessageDTO> messages = messageService.findByChatId(chatId);
         return ResponseEntity.ok(messages);
     }
 
