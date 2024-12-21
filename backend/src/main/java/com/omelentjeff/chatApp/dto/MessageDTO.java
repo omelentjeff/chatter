@@ -13,6 +13,7 @@ import java.util.List;
 public class MessageDTO {
     private Long messageId;
     private UserDTO sender;
+    private UserDTO recipient;
     private ChatDTO chat;
     private String content;
     private LocalDateTime createdAt;

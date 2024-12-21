@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -37,6 +38,7 @@ public class MessageService {
                 .map(userChat -> userChat.getUser().getId())
                 .toList();
 
+
         var chatDTO = ChatDTO.builder()
                 .chatId(foundChat.getChatId())
                 .chatName(foundChat.getChatName())
@@ -45,15 +47,24 @@ public class MessageService {
                 .build();
 
         return messages.stream()
-                .map(message -> MessageDTO.builder()
+                .map(message -> {
+                    var recipientId = userIds.stream()
+                            .filter(id -> !Objects.equals(id, message.getSender().getId()))
+                            .findFirst()
+                            .orElse(null);
+
+                    UserEntity recipient = userRepository.findById(recipientId).orElse(null);
+
+                    return MessageDTO.builder()
                         .messageId(message.getMessageId())
                         .sender(userMapper.toDTO(message.getSender()))
+                            .recipient(userMapper.toDTO(recipient))
                         .chat(chatDTO)
                         .content(message.getContent())
                         .createdAt(message.getCreatedAt())
                         .updatedAt(message.getUpdatedAt())
-                        .build())
-                .collect(Collectors.toList());
+                        .build();
+        }).collect(Collectors.toList());
     }
 
 
