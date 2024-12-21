@@ -8,6 +8,7 @@ import com.omelentjeff.chatApp.mapper.ChatMapper;
 import com.omelentjeff.chatApp.mapper.UserMapper;
 import com.omelentjeff.chatApp.models.Chat;
 import com.omelentjeff.chatApp.models.Message;
+import com.omelentjeff.chatApp.models.UserChat;
 import com.omelentjeff.chatApp.models.UserEntity;
 import com.omelentjeff.chatApp.repositories.ChatRepository;
 import com.omelentjeff.chatApp.repositories.MessageRepository;
@@ -74,12 +75,23 @@ public class MessageService {
 
         messageRepository.save(message);
 
-        UserDTO userDTO = userMapper.toDTO(sender);
-        System.out.println(userDTO);
+        List<UserEntity> users = foundChat.getUserChats().stream()
+                .map(UserChat::getUser)
+                .toList();
+
+        UserEntity recipient = users.stream()
+                .filter(user -> !user.equals(sender))
+                .findFirst()
+                .orElse(null);
+
+        UserDTO senderDTO = userMapper.toDTO(sender);
+        UserDTO recipientDTO = userMapper.toDTO(recipient);
 
         return MessageDTO.builder()
                 .messageId(message.getMessageId())
-                .sender(userDTO)
+                .sender(senderDTO)
+                .recipient(recipientDTO)
+                .chat(chatMapper.toChatDTO(foundChat))
                 .content(message.getContent())
                 .createdAt(message.getCreatedAt())
                 .updatedAt(message.getUpdatedAt())
