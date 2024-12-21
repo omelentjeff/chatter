@@ -28,16 +28,7 @@ public class ChatService {
     public ChatDTO findById(Long id) {
         Chat tempChat = chatRepository.findById(id).orElseThrow();
 
-        List<Integer> userIds = tempChat.getUserChats().stream()
-                .map(userChat -> userChat.getUser().getId())
-                .toList();
-
-        return ChatDTO.builder()
-                .chatId(tempChat.getChatId())
-                .chatName(tempChat.getChatName())
-                .isGroup(tempChat.isGroup())
-                .userIds(userIds)
-                .build();
+        return chatMapper.toChatDTO(tempChat);
     }
 
     @Transactional

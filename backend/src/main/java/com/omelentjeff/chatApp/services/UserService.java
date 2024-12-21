@@ -22,6 +22,7 @@ public class UserService {
     }
 
     public List<ChatDTO> findAllChatsById(Integer id) {
+
         return userChatService.getChatsById(id);
     }
 }
