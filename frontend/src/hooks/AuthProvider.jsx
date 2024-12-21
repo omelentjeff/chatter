@@ -9,13 +9,14 @@ const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [username, setUsername] = useState(null);
   const [role, setRole] = useState(null);
-  const [token, setToken] = useState(localStorage.getItem("token") || "");
+  const [token, setToken] = useState("");
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
+      setToken(storedToken);
       const decodedToken = jwtDecode(storedToken);
       setUsername(decodedToken.sub);
       //setRole(decodedToken.role[0].authority || "USER");

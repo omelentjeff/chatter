@@ -8,7 +8,7 @@ export default function MyAppBar() {
 
   return (
     <Box sx={{ flexGrow: 1 }}>
-      <AppBar position="static">
+      <AppBar position="static" sx={{ backgroundColor: "#2F80ED" }}>
         <Toolbar>
           <Typography
             variant="h6"
