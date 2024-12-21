@@ -1,5 +1,7 @@
 package com.omelentjeff.chatApp.controllers;
 
+import com.omelentjeff.chatApp.dto.CreateMessageRequest;
+import com.omelentjeff.chatApp.dto.MessageDTO;
 import com.omelentjeff.chatApp.models.Message;
 import com.omelentjeff.chatApp.services.MessageService;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +24,7 @@ public class MessageController {
     }
 
     @PostMapping
-    public ResponseEntity<MessageDTO> saveMessage(@RequestBody createMessageRequest) {
+    public ResponseEntity<MessageDTO> saveMessage(@RequestBody CreateMessageRequest createMessageRequest) {
         MessageDTO savedMessage = messageService.save(createMessageRequest);
         return ResponseEntity.ok(savedMessage);
     }
