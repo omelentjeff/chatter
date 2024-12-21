@@ -43,6 +43,11 @@ public class ChatService {
             userChatRepository.save(userChat);
         }
 
-        return chatMapper.toChatDTO(savedChat);
+       return ChatDTO.builder()
+                .chatId(savedChat.getChatId())
+                .chatName(savedChat.getChatName())
+                .isGroup(savedChat.isGroup())
+                .userIds(createChatRequest.getUserIds())
+                .build();
     }
 }
