@@ -39,12 +39,7 @@ public class MessageService {
                 .toList();
 
 
-        var chatDTO = ChatDTO.builder()
-                .chatId(foundChat.getChatId())
-                .chatName(foundChat.getChatName())
-                .isGroup(foundChat.isGroup())
-                .userIds(userIds)
-                .build();
+        var chatDTO = chatMapper.toChatDTO(foundChat);
 
         return messages.stream()
                 .map(message -> {
