@@ -1,5 +1,6 @@
 package com.omelentjeff.chatApp.services;
 
+import com.omelentjeff.chatApp.dto.CreateChatRequest;
 import com.omelentjeff.chatApp.models.Chat;
 import com.omelentjeff.chatApp.models.UserChat;
 import com.omelentjeff.chatApp.models.UserEntity;
@@ -21,11 +22,16 @@ public class ChatService {
     private final UserChatRepository userChatRepository;
 
     @Transactional
-    public Chat save(Chat chat, List<Integer> userIds) {
+    public Chat save(CreateChatRequest createChatRequest) {
 
-        Chat savedChat = chatRepository.save(chat);
+        var tempChat = Chat.builder()
+                .chatName(createChatRequest.getChatName())
+                .isGroup(createChatRequest.isGroup())
+                .build();
 
-        List<UserEntity> users = userRepository.findAllById(userIds);
+        Chat savedChat = chatRepository.save(tempChat);
+
+        List<UserEntity> users = userRepository.findAllById(createChatRequest.getUserIds());
 
         for (UserEntity user : users) {
             UserChat userChat = new UserChat();
