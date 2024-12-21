@@ -7,7 +7,7 @@ import java.util.List;
 
 @Data
 @AllArgsConstructor
-public class ChatResponse {
+public class ChatDTO {
     private Long chatId;
     private String chatName;
     private boolean isGroup;
