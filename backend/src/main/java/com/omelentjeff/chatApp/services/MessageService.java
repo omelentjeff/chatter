@@ -1,8 +1,10 @@
 package com.omelentjeff.chatApp.services;
 
+import com.omelentjeff.chatApp.dto.ChatDTO;
 import com.omelentjeff.chatApp.dto.CreateMessageRequest;
 import com.omelentjeff.chatApp.dto.MessageDTO;
 import com.omelentjeff.chatApp.dto.UserDTO;
+import com.omelentjeff.chatApp.mapper.ChatMapper;
 import com.omelentjeff.chatApp.mapper.UserMapper;
 import com.omelentjeff.chatApp.models.Chat;
 import com.omelentjeff.chatApp.models.Message;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -23,10 +26,36 @@ public class MessageService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final ChatMapper chatMapper;
 
-    public List<Message> findByChatId(Long chatId) {
-        return messageRepository.findByChatChatId(chatId);
+    public List<MessageDTO> findByChatId(Long chatId) {
+
+        List<Message> messages = messageRepository.findByChatChatId(chatId);
+        Chat foundChat = chatRepository.findById(chatId).orElse(null);
+
+        List<Integer> userIds = foundChat.getUserChats().stream()
+                .map(userChat -> userChat.getUser().getId())
+                .toList();
+
+        var chatDTO = ChatDTO.builder()
+                .chatId(foundChat.getChatId())
+                .chatName(foundChat.getChatName())
+                .isGroup(foundChat.isGroup())
+                .userIds(userIds)
+                .build();
+
+        return messages.stream()
+                .map(message -> MessageDTO.builder()
+                        .messageId(message.getMessageId())
+                        .sender(userMapper.toDTO(message.getSender()))
+                        .chat(chatDTO)
+                        .content(message.getContent())
+                        .createdAt(message.getCreatedAt())
+                        .updatedAt(message.getUpdatedAt())
+                        .build())
+                .collect(Collectors.toList());
     }
+
 
     public MessageDTO save(CreateMessageRequest createMessageRequest) {
         Chat foundChat = chatRepository.findById(createMessageRequest.getChatId()).orElse(null);
