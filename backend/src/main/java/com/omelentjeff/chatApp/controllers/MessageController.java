@@ -4,10 +4,7 @@ import com.omelentjeff.chatApp.models.Message;
 import com.omelentjeff.chatApp.services.MessageService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +19,11 @@ public class MessageController {
     public ResponseEntity<List<Message>> getMessagesByChatId(@PathVariable Long chatId) {
         List<Message> messages = messageService.findByChatId(chatId);
         return ResponseEntity.ok(messages);
+    }
+
+    @PostMapping
+    public ResponseEntity<MessageDTO> saveMessage(@RequestBody createMessageRequest) {
+        MessageDTO savedMessage = messageService.save(createMessageRequest);
+        return ResponseEntity.ok(savedMessage);
     }
 }
