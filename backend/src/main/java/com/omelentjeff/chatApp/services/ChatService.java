@@ -3,6 +3,7 @@ package com.omelentjeff.chatApp.services;
 import com.omelentjeff.chatApp.dto.ChatDTO;
 import com.omelentjeff.chatApp.dto.CreateChatRequest;
 import com.omelentjeff.chatApp.dto.UserDTO;
+import com.omelentjeff.chatApp.exception.ChatNotFoundException;
 import com.omelentjeff.chatApp.mapper.ChatMapper;
 import com.omelentjeff.chatApp.mapper.UserMapper;
 import com.omelentjeff.chatApp.models.Chat;
@@ -29,14 +30,14 @@ public class ChatService {
     private final UserMapper userMapper;
 
     public ChatDTO findById(Long id) {
-        Chat tempChat = chatRepository.findById(id).orElseThrow();
+        Chat tempChat = chatRepository.findById(id).orElseThrow(() ->new ChatNotFoundException("Chat not found with id: " + id));
 
         return chatMapper.toChatDTO(tempChat);
     }
 
     public UserDTO findRecipientByChatId(Long chatId, Integer senderId) {
 
-        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new RuntimeException("Chat not found"));
+        Chat chat = chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException("Chat not found with id: " + chatId));
 
         List<UserEntity> users = chat.getUserChats().stream()
                 .map(UserChat::getUser)
