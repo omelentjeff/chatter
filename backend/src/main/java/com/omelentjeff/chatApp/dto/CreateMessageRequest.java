@@ -12,6 +12,5 @@ import java.util.List;
 public class CreateMessageRequest {
     private Long chatId;
     private Integer senderId;
-    private Integer recipientId;
     private String content;
 }
