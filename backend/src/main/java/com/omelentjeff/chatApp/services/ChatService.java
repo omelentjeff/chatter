@@ -1,6 +1,8 @@
 package com.omelentjeff.chatApp.services;
 
+import com.omelentjeff.chatApp.dto.ChatDTO;
 import com.omelentjeff.chatApp.dto.CreateChatRequest;
+import com.omelentjeff.chatApp.mapper.ChatMapper;
 import com.omelentjeff.chatApp.models.Chat;
 import com.omelentjeff.chatApp.models.UserChat;
 import com.omelentjeff.chatApp.models.UserEntity;
@@ -20,9 +22,10 @@ public class ChatService {
     private final ChatRepository chatRepository;
     private final UserRepository userRepository;
     private final UserChatRepository userChatRepository;
+    private final ChatMapper chatMapper;
 
     @Transactional
-    public Chat save(CreateChatRequest createChatRequest) {
+    public ChatDTO save(CreateChatRequest createChatRequest) {
 
         var tempChat = Chat.builder()
                 .chatName(createChatRequest.getChatName())
@@ -40,6 +43,6 @@ public class ChatService {
             userChatRepository.save(userChat);
         }
 
-        return savedChat;
+        return chatMapper.toChatDTO(savedChat);
     }
 }
