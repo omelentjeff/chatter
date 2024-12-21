@@ -5,6 +5,7 @@ import com.omelentjeff.chatApp.dto.CreateMessageRequest;
 import com.omelentjeff.chatApp.dto.MessageDTO;
 import com.omelentjeff.chatApp.dto.UserDTO;
 import com.omelentjeff.chatApp.mapper.ChatMapper;
+import com.omelentjeff.chatApp.mapper.MessageMapper;
 import com.omelentjeff.chatApp.mapper.UserMapper;
 import com.omelentjeff.chatApp.models.Chat;
 import com.omelentjeff.chatApp.models.Message;
@@ -29,6 +30,7 @@ public class MessageService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final ChatMapper chatMapper;
+    private final MessageMapper messageMapper;
 
     public List<MessageDTO> findByChatId(Long chatId) {
 
@@ -51,15 +53,7 @@ public class MessageService {
 
                     UserEntity recipient = userRepository.findById(recipientId).orElse(null);
 
-                    return MessageDTO.builder()
-                        .messageId(message.getMessageId())
-                        .sender(userMapper.toDTO(message.getSender()))
-                            .recipient(userMapper.toDTO(recipient))
-                        .chat(chatDTO)
-                        .content(message.getContent())
-                        .createdAt(message.getCreatedAt())
-                        .updatedAt(message.getUpdatedAt())
-                        .build();
+                    return messageMapper.toDTO(message);
         }).collect(Collectors.toList());
     }
 
@@ -86,15 +80,13 @@ public class MessageService {
 
         UserDTO senderDTO = userMapper.toDTO(sender);
         UserDTO recipientDTO = userMapper.toDTO(recipient);
+        ChatDTO chatDTO = chatMapper.toChatDTO(foundChat);
+        MessageDTO messageDTO = messageMapper.toDTO(message);
 
-        return MessageDTO.builder()
-                .messageId(message.getMessageId())
-                .sender(senderDTO)
-                .recipient(recipientDTO)
-                .chat(chatMapper.toChatDTO(foundChat))
-                .content(message.getContent())
-                .createdAt(message.getCreatedAt())
-                .updatedAt(message.getUpdatedAt())
-                .build();
+        messageDTO.setSender(senderDTO);
+        messageDTO.setRecipient(recipientDTO);
+        messageDTO.setChat(chatDTO);
+
+        return messageDTO;
     }
 }
