@@ -18,6 +18,7 @@ import com.omelentjeff.chatApp.repositories.MessageRepository;
 import com.omelentjeff.chatApp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Objects;
@@ -60,6 +61,7 @@ public class MessageService {
     }
 
 
+    @Transactional
     public MessageDTO save(CreateMessageRequest createMessageRequest) {
         Chat foundChat = chatRepository.findById(createMessageRequest.getChatId()).orElseThrow(() -> new ChatNotFoundException("Chat not found"));
 
