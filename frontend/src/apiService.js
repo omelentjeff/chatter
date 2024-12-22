@@ -1,0 +1,26 @@
+import axios from "axios";
+
+const baseUrl = `${import.meta.env.VITE_API_URL}`;
+
+export const fetchData = async (token, userId) => {
+  try {
+    console.log("Token:", token);
+    console.log("API Base URL:", baseUrl);
+
+    const response = await axios.get(`${baseUrl}/users/${userId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    console.log("Data fetched:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching data:`, error);
+    throw (
+      error.response?.data ||
+      new Error("An error occurred while fetching data.")
+    );
+  }
+};
