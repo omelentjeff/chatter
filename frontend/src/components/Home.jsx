@@ -1,15 +1,37 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Grid, Typography, TextField, Paper, Box } from "@mui/material";
+import { useAuth } from "../hooks/AuthProvider";
+import { over } from "stompjs";
+import SockJS from "sockjs-client";
+
+let stompClient = null;
 
 export default function Home() {
   // State to track the chat message input
   const [message, setMessage] = useState("");
+  const { userId } = useAuth();
+
+  const onConnected = () => {
+    console.log("Connected to WebSocket");
+    stompClient.subscribe(`/user/${userId}/queue/messages`, onMessageReceived);
+  };
+
+  const onMessageReceived = (payload) => {
+    console.log("Message received:", payload);
+  };
+
+  const onError = (error) => {
+    console.error("Error connecting to WebSocket:", error);
+  };
 
   // Handle submit: log the message to the console
   const handleSubmit = (event) => {
     event.preventDefault();
     console.log("Message:", message);
     setMessage("");
+    const socket = new SockJS("http://localhost:8080/ws");
+    stompClient = over(socket);
+    stompClient.connect({}, onConnected, onError);
   };
 
   return (
