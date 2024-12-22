@@ -38,6 +38,7 @@ export const WebSocketProvider = ({ children }) => {
       // Cleanup on unmount
       return () => {
         client.disconnect(() => {
+          setMessages([]);
           console.log("WebSocket disconnected");
         });
       };
