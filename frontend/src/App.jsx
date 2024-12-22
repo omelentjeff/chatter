@@ -6,12 +6,15 @@ import Home from "./components/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import { AuthProvider, useAuth } from "./hooks/AuthProvider";
+import { WebSocketProvider } from "./hooks/WebSocketProvider";
 
 function App() {
   return (
     <Router>
       <AuthProvider>
-        <AppLayout />
+        <WebSocketProvider>
+          <AppLayout />
+        </WebSocketProvider>
       </AuthProvider>
     </Router>
   );

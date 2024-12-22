@@ -4,11 +4,14 @@ import { useAuth } from "../hooks/AuthProvider";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 
+// TODO CREATE A WEBSOCKET HOOK TO HAVE 1 CONNECTION FOR THE WHOLE APP
+
 let stompClient = null;
 
 export default function Home() {
   // State to track the chat message input
   const [message, setMessage] = useState("");
+  const [connections, setConnections] = useState([]);
   const { userId } = useAuth();
 
   const onConnected = () => {
@@ -46,9 +49,7 @@ export default function Home() {
           textAlign: "center",
           textDecoration: "underline",
         }}
-      >
-        <Typography variant="h6">Connections</Typography>
-      </Grid>
+      ></Grid>
 
       {/* Right side: Chat Window */}
       <Grid item xs={9} sx={{ padding: 2 }}>
