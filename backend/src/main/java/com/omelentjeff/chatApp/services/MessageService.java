@@ -38,7 +38,7 @@ public class MessageService {
     public List<MessageDTO> findByChatId(Long chatId) {
 
         List<Message> messages = messageRepository.findByChatChatId(chatId);
-        Chat foundChat = chatRepository.findById(chatId).orElse(null);
+        Chat foundChat = chatRepository.findById(chatId).orElseThrow(() -> new ChatNotFoundException("Chat not found"));
 
         List<Integer> userIds = foundChat.getUserChats().stream()
                 .map(userChat -> userChat.getUser().getId())
@@ -49,14 +49,23 @@ public class MessageService {
 
         return messages.stream()
                 .map(message -> {
-                    var recipientId = userIds.stream()
+                    Integer recipientId = userIds.stream()
                             .filter(id -> !Objects.equals(id, message.getSender().getId()))
                             .findFirst()
-                            .orElse(null);
+                            .orElseThrow(() -> new UserNotFoundException("User not found"));
 
-                    UserEntity recipient = userRepository.findById(recipientId).orElse(null);
+                    UserEntity recipient = userRepository.findById(recipientId).orElseThrow(() -> new UserNotFoundException("User not found"));
 
-                    return messageMapper.toDTO(message);
+                    MessageDTO messageDTO = messageMapper.toDTO(message);
+
+                    UserDTO recipientDTO = userMapper.toDTO(recipient);
+                    messageDTO.setRecipient(recipientDTO);
+
+                    UserDTO senderDTO = userMapper.toDTO(message.getSender());
+                    messageDTO.setSender(senderDTO);
+                    messageDTO.setChat(chatDTO);
+
+                    return messageDTO;
         }).collect(Collectors.toList());
     }
 
