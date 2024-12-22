@@ -21,8 +21,23 @@ public class ChatMessageController {
 
     @MessageMapping("/chat")
     public void processMessage(@Payload CreateMessageRequest messageRequest) {
+        // Save the message and get the full DTO with recipient
         MessageDTO savedMessage = messageService.save(messageRequest);
-        UserDTO recipient = chatService.findRecipientByChatId(messageRequest.getChatId(), messageRequest.getSenderId());
-        messagingTemplate.convertAndSendToUser(String.valueOf(recipient.getId()), "/queue/messages", savedMessage);
+
+        // Send the message to the recipient
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(savedMessage.getRecipient().getId()), // Use recipient ID
+                "/queue/messages",
+                savedMessage
+        );
+
+        // Send the message back to the sender as well
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(savedMessage.getSender().getId()), // Use sender ID
+                "/queue/messages",
+                savedMessage
+        );
     }
+
+
 }
