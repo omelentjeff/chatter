@@ -19,3 +19,22 @@ export const fetchData = async (token, userId) => {
     );
   }
 };
+
+export const fetchMessagesByChatId = async (token, chatId) => {
+  try {
+    const response = await axios.get(`${baseUrl}/messages/chat/${chatId}`, {
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+    console.log("Messages fetched:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error(`Error fetching messages:`, error);
+    throw (
+      error.response?.data ||
+      new Error("An error occurred while fetching messages.")
+    );
+  }
+};
