@@ -73,19 +73,14 @@ public class ChatService {
         Chat savedChat = chatRepository.save(tempChat);
 
         // Save user-chat relationships
-        for (UserEntity user : users) {
+        users.forEach(user -> {
             UserChat userChat = new UserChat();
             userChat.setChat(savedChat);
             userChat.setUser(user);
             userChatRepository.save(userChat);
-        }
+        });
 
-        return ChatDTO.builder()
-                .chatId(savedChat.getChatId())
-                .chatName(chatName)
-                .isGroup(savedChat.isGroup())
-                .userIds(createChatRequest.getUserIds())
-                .build();
+        return chatMapper.toChatDTO(savedChat);
     }
 
 }

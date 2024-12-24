@@ -1,6 +1,7 @@
 package com.omelentjeff.chatApp.mapper;
 
 import com.omelentjeff.chatApp.dto.ChatDTO;
+import com.omelentjeff.chatApp.dto.UserDTO;
 import com.omelentjeff.chatApp.models.Chat;
 import com.omelentjeff.chatApp.models.UserChat;
 import org.mapstruct.Mapper;
@@ -13,16 +14,16 @@ import java.util.stream.Collectors;
 @Mapper(componentModel = "spring")
 public interface ChatMapper {
 
-    @Mapping(target = "userIds", source = "userChats", qualifiedByName = "mapUserIds")
+    @Mapping(target = "users", source = "userChats", qualifiedByName = "mapUsers")
     ChatDTO toChatDTO(Chat chat);
 
     Chat toEntity(ChatDTO chatDTO);
 
-    @Named("mapUserIds")
-    default List<Integer> mapUserIds(List<UserChat> userChats) {
+    @Named("mapUsers")
+    default List<UserDTO> mapUsers(List<UserChat> userChats) {
         return userChats.stream()
-                .map(userChat -> userChat.getUser().getId())
+                .map(UserChat::getUser)
+                .map(user -> new UserDTO(user.getId(), user.getEmail(), user.getUsername()))
                 .collect(Collectors.toList());
     }
-
 }

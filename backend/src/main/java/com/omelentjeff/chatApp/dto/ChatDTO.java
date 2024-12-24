@@ -13,5 +13,5 @@ public class ChatDTO {
     private Long chatId;
     private String chatName;
     private boolean isGroup;
-    private List<Integer> userIds;
+    private List<UserDTO> users;
 }

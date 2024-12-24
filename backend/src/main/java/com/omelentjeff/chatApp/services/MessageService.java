@@ -45,28 +45,23 @@ public class MessageService {
                 .toList();
 
 
-        var chatDTO = chatMapper.toChatDTO(foundChat);
 
         return messages.stream()
                 .map(message -> {
-                    Integer recipientId = userIds.stream()
-                            .filter(id -> !Objects.equals(id, message.getSender().getId()))
-                            .findFirst()
-                            .orElseThrow(() -> new UserNotFoundException("User not found"));
-
-                    UserEntity recipient = userRepository.findById(recipientId).orElseThrow(() -> new UserNotFoundException("User not found"));
-
                     MessageDTO messageDTO = messageMapper.toDTO(message);
+                    messageDTO.setChat(chatMapper.toChatDTO(foundChat));
+                    messageDTO.setSender(userMapper.toDTO(message.getSender()));
 
-                    UserDTO recipientDTO = userMapper.toDTO(recipient);
-                    messageDTO.setRecipient(recipientDTO);
+                    UserEntity recipient = foundChat.getUserChats().stream()
+                            .map(UserChat::getUser)
+                            .filter(user -> !user.equals(message.getSender()))
+                            .findFirst()
+                            .orElseThrow(() -> new UserNotFoundException("Recipient not found"));
 
-                    UserDTO senderDTO = userMapper.toDTO(message.getSender());
-                    messageDTO.setSender(senderDTO);
-                    messageDTO.setChat(chatDTO);
-
+                    messageDTO.setRecipient(userMapper.toDTO(recipient));
                     return messageDTO;
-        }).collect(Collectors.toList());
+                })
+                .collect(Collectors.toList());
     }
 
 
