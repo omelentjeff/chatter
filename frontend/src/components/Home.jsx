@@ -79,6 +79,15 @@ export default function Home() {
       const newMessage = websocketMessages[websocketMessages.length - 1];
       if (newMessage.chat.chatId === selectedChat.chatId) {
         setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+
+        // Update the latest message in ContactList immediately
+        setLatestMessages((prevLatestMessages) => ({
+          ...prevLatestMessages,
+          [selectedChat.chatId]: {
+            content: newMessage.content,
+            sender: newMessage.sender.username,
+          },
+        }));
       }
     }
   }, [websocketMessages, selectedChat]);
