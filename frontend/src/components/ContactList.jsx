@@ -58,7 +58,17 @@ const ContactList = ({
                     }
                     secondary={
                       latestMessage && latestMessage.sender ? (
-                        <Typography variant="body2" color="textSecondary">
+                        <Typography
+                          variant="body2"
+                          color="textSecondary"
+                          sx={{
+                            display: "inline-block",
+                            maxWidth: "100%",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
                           {latestMessage.sender === username
                             ? `You: ${latestMessage.content}`
                             : `${latestMessage.sender}: ${latestMessage.content}`}
