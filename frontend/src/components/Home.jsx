@@ -80,10 +80,19 @@ export default function Home() {
       if (newMessage.chat.chatId === selectedChat.chatId) {
         setChatMessages((prevMessages) => [...prevMessages, newMessage]);
 
-        // Update the latest message in ContactList immediately
+        // Update the latest message for the selected chat immediately
         setLatestMessages((prevLatestMessages) => ({
           ...prevLatestMessages,
           [selectedChat.chatId]: {
+            content: newMessage.content,
+            sender: newMessage.sender.username,
+          },
+        }));
+      } else {
+        // Update the latest message for the chat that received a message
+        setLatestMessages((prevLatestMessages) => ({
+          ...prevLatestMessages,
+          [newMessage.chat.chatId]: {
             content: newMessage.content,
             sender: newMessage.sender.username,
           },
