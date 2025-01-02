@@ -16,7 +16,7 @@ const ContactList = ({
   contacts,
   latestMessages,
 }) => {
-  const { userId } = useAuth();
+  const { userId, username } = useAuth();
 
   return (
     <Box
@@ -46,13 +46,28 @@ const ContactList = ({
                   button
                   selected={selectedChat?.chatId === chat.chatId}
                   onClick={() => setSelectedChat(chat)}
+                  sx={{
+                    paddingBottom: 1, // Adjust the padding for a little more space
+                  }}
                 >
                   <ListItemText
-                    primary={displayName}
+                    primary={
+                      <Typography variant="body1" fontWeight="bold">
+                        {displayName}
+                      </Typography>
+                    }
                     secondary={
-                      latestMessage
-                        ? `${latestMessage.sender}: ${latestMessage.content}`
-                        : "No messages"
+                      latestMessage && latestMessage.sender ? (
+                        <Typography variant="body2" color="textSecondary">
+                          {latestMessage.sender === username
+                            ? `You: ${latestMessage.content}`
+                            : `${latestMessage.sender}: ${latestMessage.content}`}
+                        </Typography>
+                      ) : (
+                        <Typography variant="body2" color="textSecondary">
+                          No messages
+                        </Typography>
+                      )
                     }
                   />
                 </ListItem>
