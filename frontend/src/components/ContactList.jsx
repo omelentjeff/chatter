@@ -8,7 +8,6 @@ import {
   Divider,
 } from "@mui/material";
 import { useAuth } from "../hooks/AuthProvider";
-import { fetchData } from "../apiService";
 import AvatarChip from "./AvatarChip";
 
 const ContactList = ({
@@ -51,7 +50,9 @@ const ContactList = ({
                   <ListItemText
                     primary={displayName}
                     secondary={
-                      latestMessage ? latestMessage.content : "No messages"
+                      latestMessage
+                        ? `${latestMessage.sender}: ${latestMessage.content}`
+                        : "No messages"
                     }
                   />
                 </ListItem>
