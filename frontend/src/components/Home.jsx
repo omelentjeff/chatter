@@ -4,7 +4,7 @@ import ContactList from "./ContactList";
 import ChatWindow from "./ChatWindow";
 import { useWebSocket } from "../hooks/WebSocketProvider";
 import { useAuth } from "../hooks/AuthProvider";
-import { fetchMessagesByChatId } from "../apiService";
+import { fetchMessagesByChatId, fetchData } from "../apiService";
 
 export default function Home() {
   const [message, setMessage] = useState("");
@@ -16,6 +16,29 @@ export default function Home() {
   const { userId, token } = useAuth();
   const [selectedChat, setSelectedChat] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
+  const [latestMessages, setLatestMessages] = useState({});
+  const [contacts, setContacts] = useState([]);
+
+  useEffect(() => {
+    const fetchContacts = async () => {
+      try {
+        const data = await fetchData(token, userId);
+        setContacts(data);
+
+        // Fetch latest message for each chat
+        const latestMessagesData = {};
+        for (let chat of data) {
+          const messages = await fetchMessagesByChatId(token, chat.chatId);
+          latestMessagesData[chat.chatId] = messages[messages.length - 1]; // Last message in the chat
+        }
+        setLatestMessages(latestMessagesData);
+      } catch (error) {
+        console.error("Error fetching contacts:", error);
+      }
+    };
+
+    fetchContacts();
+  }, [token, userId]);
 
   // Fetch messages when a chat is selected
   useEffect(() => {
@@ -77,6 +100,8 @@ export default function Home() {
         <ContactList
           selectedChat={selectedChat}
           setSelectedChat={setSelectedChat}
+          contacts={contacts}
+          latestMessages={latestMessages}
         />
       </Grid>
 

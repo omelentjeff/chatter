@@ -11,22 +11,13 @@ import { useAuth } from "../hooks/AuthProvider";
 import { fetchData } from "../apiService";
 import AvatarChip from "./AvatarChip";
 
-const ContactList = ({ selectedChat, setSelectedChat }) => {
-  const [contacts, setContacts] = useState([]);
-  const { userId, token, logout } = useAuth();
-
-  useEffect(() => {
-    const fetchContacts = async () => {
-      try {
-        const data = await fetchData(token, userId);
-        setContacts(data);
-      } catch (error) {
-        console.error("Error fetching contacts:", error);
-      }
-    };
-
-    fetchContacts();
-  }, [token, userId]);
+const ContactList = ({
+  selectedChat,
+  setSelectedChat,
+  contacts,
+  latestMessages,
+}) => {
+  const { userId } = useAuth();
 
   return (
     <Box
@@ -48,19 +39,24 @@ const ContactList = ({ selectedChat, setSelectedChat }) => {
             // Find the other user's name in the chat and make it title of the chat
             const otherUser = chat.users.find((user) => user.id !== userId);
             const displayName = otherUser ? otherUser.username : "Unnamed Chat";
+            const latestMessage = latestMessages[chat.chatId];
 
             return (
-              <>
+              <React.Fragment key={chat.chatId}>
                 <ListItem
                   button
-                  key={chat.chatId}
                   selected={selectedChat?.chatId === chat.chatId}
                   onClick={() => setSelectedChat(chat)}
                 >
-                  <ListItemText primary={displayName} />
+                  <ListItemText
+                    primary={displayName}
+                    secondary={
+                      latestMessage ? latestMessage.content : "No messages"
+                    }
+                  />
                 </ListItem>
                 <Divider />
-              </>
+              </React.Fragment>
             );
           })}
         </List>
