@@ -108,7 +108,7 @@ export default function Home() {
   };
 
   return (
-    <Grid container sx={{ height: "100vh", overflow: "hidden", padding: 4 }}>
+    <Grid container sx={{ height: "100vh", padding: 2, overflow: "hidden" }}>
       {/* Left side: Chats List */}
       <Grid
         item
@@ -127,7 +127,7 @@ export default function Home() {
       </Grid>
 
       {/* Right side: Chat Window */}
-      <Grid item xs={9} sx={{ height: "100%", padding: 6 }}>
+      <Grid item xs={9} sx={{ height: "100%" }}>
         <ChatWindow
           selectedChat={selectedChat}
           chatMessages={chatMessages}

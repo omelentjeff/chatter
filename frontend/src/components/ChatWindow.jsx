@@ -28,7 +28,7 @@ export default function ChatWindow({
         padding: 2,
         display: "flex",
         flexDirection: "column",
-        height: "calc(100vh - 160px)",
+        height: "100%",
       }}
     >
       <Box sx={{ flexGrow: 1, overflowY: "auto", marginBottom: 2 }}>

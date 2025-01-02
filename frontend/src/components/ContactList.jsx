@@ -24,7 +24,7 @@ const ContactList = ({
         display: "flex",
         flexDirection: "column",
         justifyContent: "space-between",
-        height: "100%",
+        height: "100vh",
         overflow: "hidden",
       }}
     >
