@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useRef } from "react";
 import { Box, Paper, Typography, TextField, Button } from "@mui/material";
 
 export default function ChatWindow({
@@ -10,6 +10,17 @@ export default function ChatWindow({
   connected,
   userId,
 }) {
+  // Create a ref to the chat container
+  const messagesEndRef = useRef(null);
+
+  // Scroll to the bottom whenever chatMessages change
+  useEffect(() => {
+    // Scroll to the bottom of the chat when new messages arrive
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [chatMessages]); // Run whenever chatMessages are updated
+
   return (
     <Paper
       elevation={3}
@@ -64,7 +75,11 @@ export default function ChatWindow({
             Select a chat to view messages.
           </Typography>
         )}
+
+        {/* Scroll to bottom */}
+        <div ref={messagesEndRef} />
       </Box>
+
       <form onSubmit={handleSendMessage}>
         <TextField
           label="Type a message..."
