@@ -12,6 +12,10 @@ export default function ChatWindow({
 }) {
   // Create a ref to the chat container
   const messagesEndRef = useRef(null);
+  const otherUser = selectedChat
+    ? selectedChat.users.find((user) => user.id !== userId)
+    : null;
+  const displayName = otherUser ? otherUser.username : "Unnamed Chat";
 
   // Scroll to the bottom whenever chatMessages change
   useEffect(() => {
@@ -31,6 +35,19 @@ export default function ChatWindow({
         height: "100%",
       }}
     >
+      {selectedChat && (
+        <Box
+          sx={{
+            backgroundColor: "#1976d2", // Blue color for banner
+            color: "white",
+            padding: "8px 12px",
+            borderRadius: "8px",
+            marginBottom: 2,
+          }}
+        >
+          <Typography variant="h6">{displayName}</Typography>
+        </Box>
+      )}
       <Box sx={{ flexGrow: 1, overflowY: "auto", marginBottom: 2 }}>
         {selectedChat ? (
           chatMessages.map((msg) => (
