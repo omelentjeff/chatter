@@ -8,6 +8,7 @@ export default function ChatWindow({
   setMessage,
   handleSendMessage,
   connected,
+  userId,
 }) {
   return (
     <Paper
@@ -22,17 +23,41 @@ export default function ChatWindow({
       <Box sx={{ flexGrow: 1, overflowY: "auto", marginBottom: 2 }}>
         {selectedChat ? (
           chatMessages.map((msg) => (
-            <Typography
+            <Box
               key={msg.messageId}
-              variant="body2"
-              sx={{ marginBottom: 1 }}
+              sx={{
+                display: "flex",
+                justifyContent:
+                  msg.sender.id === userId ? "flex-end" : "flex-start",
+                marginBottom: 1,
+              }}
             >
-              <strong>{msg.sender.username}:</strong> {msg.content}
-              <br />
-              <span style={{ fontSize: "0.8em", color: "gray" }}>
-                {new Date(msg.createdAt).toLocaleString()}
-              </span>
-            </Typography>
+              <Typography
+                variant="body2"
+                sx={{
+                  backgroundColor:
+                    msg.sender.id === userId ? "#d1ffd6" : "#f1f0f0",
+                  borderRadius: "8px",
+                  padding: "8px 12px",
+                  maxWidth: "70%",
+                  wordWrap: "break-word",
+                  boxShadow: 1,
+                }}
+              >
+                <strong>{msg.sender.username}:</strong> {msg.content}
+                <br />
+                <span
+                  style={{
+                    fontSize: "0.8em",
+                    color: "gray",
+                    display: "block",
+                    textAlign: msg.sender.id === userId ? "right" : "left",
+                  }}
+                >
+                  {new Date(msg.createdAt).toLocaleString()}
+                </span>
+              </Typography>
+            </Box>
           ))
         ) : (
           <Typography variant="body2" color="textSecondary">

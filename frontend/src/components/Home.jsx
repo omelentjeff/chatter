@@ -89,6 +89,7 @@ export default function Home() {
           setMessage={setMessage}
           handleSendMessage={handleSendMessage}
           connected={connected}
+          userId={userId}
         />
       </Grid>
     </Grid>
