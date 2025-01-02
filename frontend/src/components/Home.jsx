@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Paper, Box, Typography, TextField, Button } from "@mui/material";
+import { Grid } from "@mui/material";
 import ContactList from "./ContactList";
 import ChatWindow from "./ChatWindow";
 import { useWebSocket } from "../hooks/WebSocketProvider";
@@ -64,14 +64,14 @@ export default function Home() {
   };
 
   return (
-    <Grid container spacing={2} sx={{ height: "100vh", padding: 4 }}>
+    <Grid container sx={{ height: "100vh", overflow: "hidden", padding: 4 }}>
       {/* Left side: Chats List */}
       <Grid
         item
         xs={3}
         sx={{
+          height: "100%",
           borderRight: "1px solid #ccc",
-          padding: 2,
         }}
       >
         <ContactList
@@ -81,7 +81,7 @@ export default function Home() {
       </Grid>
 
       {/* Right side: Chat Window */}
-      <Grid item xs={9} sx={{ padding: 2 }}>
+      <Grid item xs={9} sx={{ height: "100%", padding: 6 }}>
         <ChatWindow
           selectedChat={selectedChat}
           chatMessages={chatMessages}

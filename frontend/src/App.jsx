@@ -25,7 +25,6 @@ function AppLayout() {
 
   return (
     <>
-      {token && <MyAppBar />}
       <Routes>
         {/* Public routes guarded for authenticated users */}
         <Route
