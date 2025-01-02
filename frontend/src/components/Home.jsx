@@ -13,7 +13,7 @@ export default function Home() {
     sendMessage,
     messages: websocketMessages,
   } = useWebSocket();
-  const { userId, token } = useAuth();
+  const { userId, token, username } = useAuth();
   const [selectedChat, setSelectedChat] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [latestMessages, setLatestMessages] = useState({});
@@ -25,11 +25,25 @@ export default function Home() {
         const data = await fetchData(token, userId);
         setContacts(data);
 
-        // Fetch latest message for each chat
+        // Fetch latest message for each chat and include sender's name
         const latestMessagesData = {};
         for (let chat of data) {
           const messages = await fetchMessagesByChatId(token, chat.chatId);
-          latestMessagesData[chat.chatId] = messages[messages.length - 1]; // Last message in the chat
+          if (messages.length > 0) {
+            const latestMessage = messages[messages.length - 1];
+            const sender = latestMessage.sender
+              ? latestMessage.sender.username
+              : "Unknown User";
+            latestMessagesData[chat.chatId] = {
+              content: latestMessage.content,
+              sender: sender,
+            };
+          } else {
+            latestMessagesData[chat.chatId] = {
+              content: "No messages",
+              sender: "",
+            };
+          }
         }
         setLatestMessages(latestMessagesData);
       } catch (error) {
@@ -82,6 +96,13 @@ export default function Home() {
         senderId: userId,
         content: message,
       });
+      setLatestMessages((prevLatestMessages) => ({
+        ...prevLatestMessages,
+        [selectedChat.chatId]: {
+          content: message,
+          sender: username,
+        },
+      }));
     }
     setMessage("");
   };
