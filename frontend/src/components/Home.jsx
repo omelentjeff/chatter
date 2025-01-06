@@ -19,13 +19,14 @@ export default function Home() {
   const [latestMessages, setLatestMessages] = useState({});
   const [contacts, setContacts] = useState([]);
 
+  // Fetch initial contact list and latest messages
   useEffect(() => {
     const fetchContacts = async () => {
       try {
         const data = await fetchData(token, userId);
         setContacts(data);
 
-        // Fetch latest message for each chat and include sender's name
+        // Fetch latest message for each chat
         const latestMessagesData = {};
         for (let chat of data) {
           const messages = await fetchMessagesByChatId(token, chat.chatId);
@@ -37,11 +38,13 @@ export default function Home() {
             latestMessagesData[chat.chatId] = {
               content: latestMessage.content,
               sender: sender,
+              createdAt: latestMessage.createdAt,
             };
           } else {
             latestMessagesData[chat.chatId] = {
               content: "No messages",
               sender: "",
+              createdAt: "1970-01-01T00:00:00Z",
             };
           }
         }
@@ -54,7 +57,7 @@ export default function Home() {
     fetchContacts();
   }, [token, userId]);
 
-  // Fetch messages when a chat is selected
+  // Fetch messages for selected chat
   useEffect(() => {
     const fetchChatMessages = async () => {
       if (selectedChat) {
@@ -73,33 +76,36 @@ export default function Home() {
     fetchChatMessages();
   }, [selectedChat, token]);
 
-  // Merge WebSocket messages with fetched messages
+  // Handle WebSocket messages and update latest messages
   useEffect(() => {
-    if (selectedChat && websocketMessages.length > 0) {
+    if (websocketMessages.length > 0) {
       const newMessage = websocketMessages[websocketMessages.length - 1];
-      if (newMessage.chat.chatId === selectedChat.chatId) {
-        setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+      setLatestMessages((prevLatestMessages) => ({
+        ...prevLatestMessages,
+        [newMessage.chat.chatId]: {
+          content: newMessage.content,
+          sender: newMessage.sender.username,
+          createdAt: newMessage.createdAt,
+        },
+      }));
 
-        // Update the latest message for the selected chat immediately
-        setLatestMessages((prevLatestMessages) => ({
-          ...prevLatestMessages,
-          [selectedChat.chatId]: {
-            content: newMessage.content,
-            sender: newMessage.sender.username,
-          },
-        }));
-      } else {
-        // Update the latest message for the chat that received a message
-        setLatestMessages((prevLatestMessages) => ({
-          ...prevLatestMessages,
-          [newMessage.chat.chatId]: {
-            content: newMessage.content,
-            sender: newMessage.sender.username,
-          },
-        }));
+      if (selectedChat && newMessage.chat.chatId === selectedChat.chatId) {
+        setChatMessages((prevMessages) => [...prevMessages, newMessage]);
       }
     }
   }, [websocketMessages, selectedChat]);
+
+  // Sort contacts by latest message's createdAt
+  useEffect(() => {
+    const sortedContacts = [...contacts].sort((a, b) => {
+      const latestA =
+        latestMessages[a.chatId]?.createdAt || "1970-01-01T00:00:00Z";
+      const latestB =
+        latestMessages[b.chatId]?.createdAt || "1970-01-01T00:00:00Z";
+      return new Date(latestB) - new Date(latestA);
+    });
+    setContacts(sortedContacts);
+  }, [latestMessages, contacts]);
 
   const handleSendMessage = (event) => {
     event.preventDefault();
@@ -114,11 +120,13 @@ export default function Home() {
         senderId: userId,
         content: message,
       });
+
       setLatestMessages((prevLatestMessages) => ({
         ...prevLatestMessages,
         [selectedChat.chatId]: {
           content: message,
           sender: username,
+          createdAt: new Date().toISOString(),
         },
       }));
     }
