@@ -58,21 +58,36 @@ const ContactList = ({
                     }
                     secondary={
                       latestMessage && latestMessage.sender ? (
-                        <Typography
-                          variant="body2"
-                          color="textSecondary"
+                        <Box
                           sx={{
-                            display: "inline-block",
-                            maxWidth: "100%",
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
+                            display: "flex",
+                            justifyContent: "space-between",
                           }}
                         >
-                          {latestMessage.sender === username
-                            ? `You: ${latestMessage.content}`
-                            : `${latestMessage.sender}: ${latestMessage.content}`}
-                        </Typography>
+                          <Typography
+                            variant="body2"
+                            color="textSecondary"
+                            sx={{
+                              display: "inline-block",
+                              maxWidth: "100%",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {latestMessage.sender === username
+                              ? `You: ${latestMessage.content}`
+                              : `${latestMessage.sender}: ${latestMessage.content}`}
+                          </Typography>
+                          <Typography variant="caption" color="textSecondary">
+                            {new Date(
+                              latestMessage.createdAt
+                            ).toLocaleTimeString("en-US", {
+                              hour: "numeric",
+                              minute: "numeric",
+                            })}
+                          </Typography>
+                        </Box>
                       ) : (
                         <Typography variant="body2" color="textSecondary">
                           No messages
