@@ -14,16 +14,30 @@ export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
   const API_URL = import.meta.env.VITE_API_URL;
 
+  const isTokenExpired = (token) => {
+    try {
+      const decodedToken = jwtDecode(token);
+      return decodedToken.exp * 1000 < Date.now();
+    } catch {
+      return true; // Treat invalid tokens as expired
+    }
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem("token");
     if (storedToken) {
-      setToken(storedToken);
-      const decodedToken = jwtDecode(storedToken);
-      setUsername(decodedToken.sub);
-      setUserId(decodedToken.id);
-      //setRole(decodedToken.role[0].authority || "USER");
+      if (isTokenExpired(storedToken)) {
+        localStorage.removeItem("token");
+        setToken("");
+        navigate("/");
+      } else {
+        setToken(storedToken);
+        const decodedToken = jwtDecode(storedToken);
+        setUsername(decodedToken.sub);
+        setUserId(decodedToken.id);
+      }
     }
-  }, []);
+  }, [navigate]);
 
   const authenticate = async (username, password) => {
     try {
@@ -34,12 +48,13 @@ export const AuthProvider = ({ children }) => {
 
       if (response.data.token) {
         const decodedToken = jwtDecode(response.data.token);
+        console.log("decodedToken", decodedToken);
+        console.log("user id: ", decodedToken.id);
 
         setUsername(decodedToken.sub);
         //setRole(decodedToken.role[0].authority);
         setToken(response.data.token);
         setUserId(decodedToken.id);
-        console.log("userId", userId);
         localStorage.setItem("token", response.data.token);
         return response.data;
       }
