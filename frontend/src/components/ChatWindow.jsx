@@ -64,7 +64,7 @@ export default function ChatWindow({
                 variant="body2"
                 sx={{
                   backgroundColor:
-                    msg.sender.id === userId ? "#d1ffd6" : "#f1f0f0",
+                    msg.sender.id === userId ? "#dfeefc" : "#f1f0f0",
                   borderRadius: "8px",
                   padding: "8px 12px",
                   maxWidth: "70%",
@@ -72,7 +72,10 @@ export default function ChatWindow({
                   boxShadow: 1,
                 }}
               >
-                <strong>{msg.sender.username}:</strong> {msg.content}
+                <strong>
+                  {msg.sender.id === userId ? "You" : msg.sender.username}:
+                </strong>{" "}
+                {msg.content}
                 <br />
                 <span
                   style={{

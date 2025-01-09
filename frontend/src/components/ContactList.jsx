@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import {
   List,
   ListItem,
@@ -6,6 +6,7 @@ import {
   Typography,
   Box,
   Divider,
+  Badge,
 } from "@mui/material";
 import { useAuth } from "../hooks/AuthProvider";
 import AvatarChip from "./AvatarChip";
@@ -15,6 +16,7 @@ const ContactList = ({
   setSelectedChat,
   contacts,
   latestMessages,
+  unreadCounts, // Add unreadCounts as a prop
 }) => {
   const { userId, username } = useAuth();
 
@@ -26,6 +28,8 @@ const ContactList = ({
         justifyContent: "space-between",
         height: "100vh",
         overflow: "hidden",
+        backgroundColor: "#2F80ED",
+        color: "white",
       }}
     >
       {/* Contacts Section */}
@@ -35,10 +39,10 @@ const ContactList = ({
         </Typography>
         <List>
           {contacts.map((chat) => {
-            // Find the other user's name in the chat and make it title of the chat
             const otherUser = chat.users.find((user) => user.id !== userId);
             const displayName = otherUser ? otherUser.username : "Unnamed Chat";
             const latestMessage = latestMessages[chat.chatId];
+            const unreadCount = unreadCounts[chat.chatId] || 0; // Get unread count
 
             return (
               <React.Fragment key={chat.chatId}>
@@ -47,14 +51,33 @@ const ContactList = ({
                   selected={selectedChat?.chatId === chat.chatId}
                   onClick={() => setSelectedChat(chat)}
                   sx={{
-                    paddingBottom: 1, // Adjust the padding for a little more space
+                    paddingBottom: 1,
+                    backgroundColor:
+                      selectedChat?.chatId === chat.chatId
+                        ? "white"
+                        : "transparent", // Add background color to the selected chat
                   }}
                 >
                   <ListItemText
                     primary={
-                      <Typography variant="body1" fontWeight="bold">
-                        {displayName}
-                      </Typography>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "space-between",
+                          alignItems: "center",
+                        }}
+                      >
+                        <Typography
+                          variant="body1"
+                          fontWeight="bold"
+                          fontSize="18px"
+                        >
+                          {displayName}
+                        </Typography>
+                        {unreadCount > 0 && (
+                          <Badge badgeContent={unreadCount} color="white" />
+                        )}
+                      </Box>
                     }
                     secondary={
                       latestMessage && latestMessage.sender ? (
@@ -66,7 +89,7 @@ const ContactList = ({
                         >
                           <Typography
                             variant="body2"
-                            color="textSecondary"
+                            color="white"
                             sx={{
                               display: "inline-block",
                               maxWidth: "100%",
@@ -79,7 +102,7 @@ const ContactList = ({
                               ? `You: ${latestMessage.content}`
                               : `${latestMessage.sender}: ${latestMessage.content}`}
                           </Typography>
-                          <Typography variant="caption" color="textSecondary">
+                          <Typography variant="caption" color="white">
                             {new Date(
                               latestMessage.createdAt
                             ).toLocaleTimeString("en-US", {
@@ -89,14 +112,14 @@ const ContactList = ({
                           </Typography>
                         </Box>
                       ) : (
-                        <Typography variant="body2" color="textSecondary">
+                        <Typography variant="body2" color="white">
                           No messages
                         </Typography>
                       )
                     }
                   />
                 </ListItem>
-                <Divider />
+                <Divider sx={{ backgroundColor: "white" }} />
               </React.Fragment>
             );
           })}
@@ -108,7 +131,7 @@ const ContactList = ({
         sx={{
           padding: 2,
           borderTop: "1px solid #ccc",
-          backgroundColor: "#f7f7f7",
+          backgroundColor: "#2F80ED",
         }}
       >
         <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>

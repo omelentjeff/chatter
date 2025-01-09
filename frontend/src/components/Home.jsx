@@ -4,7 +4,12 @@ import ContactList from "./ContactList";
 import ChatWindow from "./ChatWindow";
 import { useWebSocket } from "../hooks/WebSocketProvider";
 import { useAuth } from "../hooks/AuthProvider";
-import { fetchMessagesByChatId, fetchData } from "../apiService";
+import {
+  fetchMessagesByChatId,
+  fetchData,
+  fetchUnreadCounts,
+  markMessagesAsRead,
+} from "../apiService";
 
 export default function Home() {
   const [message, setMessage] = useState("");
@@ -12,12 +17,14 @@ export default function Home() {
     connected,
     sendMessage,
     messages: websocketMessages,
+    clearMessages,
   } = useWebSocket();
   const { userId, token, username } = useAuth();
   const [selectedChat, setSelectedChat] = useState(null);
   const [chatMessages, setChatMessages] = useState([]);
   const [latestMessages, setLatestMessages] = useState({});
   const [contacts, setContacts] = useState([]);
+  const [unreadCounts, setUnreadCounts] = useState({});
 
   // Fetch initial contact list and latest messages
   useEffect(() => {
@@ -25,6 +32,7 @@ export default function Home() {
       try {
         const data = await fetchData(token, userId);
         setContacts(data);
+        console.log("Contacts fetched:", data);
 
         // Fetch latest message for each chat
         const latestMessagesData = {};
@@ -67,6 +75,7 @@ export default function Home() {
             selectedChat.chatId
           );
           setChatMessages(messages);
+          clearMessages();
         } catch (error) {
           console.error("Error fetching messages:", error);
         }
@@ -76,21 +85,87 @@ export default function Home() {
     fetchChatMessages();
   }, [selectedChat, token]);
 
+  // Fetch unread message counts on initial load
+  useEffect(() => {
+    console.log("Fetching unread counts", selectedChat);
+    const fetchUnreadCountsData = async () => {
+      try {
+        const unreadCounts = await fetchUnreadCounts(token, userId);
+        setUnreadCounts(unreadCounts);
+      } catch (error) {
+        console.error("Error fetching unread counts:", error);
+      }
+    };
+
+    fetchUnreadCountsData();
+  }, [userId, token, selectedChat]);
+
+  // Mark messages as read when a chat is selected
+  useEffect(() => {
+    if (selectedChat) {
+      setUnreadCounts((prevCounts) => ({
+        ...prevCounts,
+        [selectedChat.chatId]: 0, // Reset unread count for the selected chat immediately
+      }));
+
+      const markAllMessagesAsRead = async () => {
+        try {
+          await markMessagesAsRead(token, selectedChat.chatId, userId);
+          setUnreadCounts((prevCounts) => ({
+            ...prevCounts,
+            [selectedChat.chatId]: 0, // Reset unread count for this chat
+          }));
+        } catch (error) {
+          console.error("Error marking messages as read:", error);
+        }
+      };
+
+      markAllMessagesAsRead();
+    }
+  }, [selectedChat, token, userId]);
+
   // Handle WebSocket messages and update latest messages
   useEffect(() => {
     if (websocketMessages.length > 0) {
       const newMessage = websocketMessages[websocketMessages.length - 1];
+      const chatId = newMessage.chat.chatId;
+
       setLatestMessages((prevLatestMessages) => ({
         ...prevLatestMessages,
-        [newMessage.chat.chatId]: {
+        [chatId]: {
           content: newMessage.content,
           sender: newMessage.sender.username,
           createdAt: newMessage.createdAt,
         },
       }));
 
-      if (selectedChat && newMessage.chat.chatId === selectedChat.chatId) {
+      if (selectedChat && selectedChat.chatId === chatId) {
+        // If the selected chat is the same as the incoming message's chat,
+        // we mark the message as read and reset the unread count for this chat.
         setChatMessages((prevMessages) => [...prevMessages, newMessage]);
+        clearMessages();
+
+        const markAllMessagesAsRead = async () => {
+          try {
+            await markMessagesAsRead(token, chatId, userId);
+            setUnreadCounts((prevCounts) => ({
+              ...prevCounts,
+              [chatId]: 0, // Reset the unread count for this chat
+            }));
+          } catch (error) {
+            console.error("Error marking messages as read:", error);
+          }
+        };
+
+        markAllMessagesAsRead();
+      } else {
+        console.log("Message from another chat:", newMessage);
+        // If the message is from a chat that is not selected, we increase the unread count
+        setUnreadCounts((prevCounts) => {
+          const newCounts = { ...prevCounts };
+          newCounts[chatId] = (newCounts[chatId] || 0) + 1;
+          return newCounts;
+        });
       }
     }
   }, [websocketMessages, selectedChat]);
@@ -134,7 +209,7 @@ export default function Home() {
   };
 
   return (
-    <Grid container sx={{ height: "100vh", padding: 2, overflow: "hidden" }}>
+    <Grid container sx={{ height: "100vh", paddingTop: 4, overflow: "hidden" }}>
       {/* Left side: Chats List */}
       <Grid
         item
@@ -149,6 +224,7 @@ export default function Home() {
           setSelectedChat={setSelectedChat}
           contacts={contacts}
           latestMessages={latestMessages}
+          unreadCounts={unreadCounts}
         />
       </Grid>
 
