@@ -38,7 +38,7 @@ export default function ChatWindow({
       {selectedChat && (
         <Box
           sx={{
-            backgroundColor: "#1976d2", // Blue color for banner
+            backgroundColor: "#2F80ED", // Blue color for banner
             color: "white",
             padding: "8px 12px",
             borderRadius: "8px",
