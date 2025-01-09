@@ -48,14 +48,20 @@ const ContactList = ({
               <React.Fragment key={chat.chatId}>
                 <ListItem
                   button
-                  selected={selectedChat?.chatId === chat.chatId}
                   onClick={() => setSelectedChat(chat)}
                   sx={{
                     paddingBottom: 1,
+                    borderRadius: "6px",
                     backgroundColor:
                       selectedChat?.chatId === chat.chatId
-                        ? "white"
-                        : "transparent", // Add background color to the selected chat
+                        ? "#5fb2ff" // Active background color for selected chat
+                        : "transparent", // Default background color for non-selected chats
+                    "&:hover": {
+                      backgroundColor:
+                        selectedChat?.chatId === chat.chatId
+                          ? "#5fb2ff" // Keep same color on hover if selected
+                          : "#7db3e5", // Change to a lighter color on hover if not selected
+                    },
                   }}
                 >
                   <ListItemText
@@ -75,7 +81,7 @@ const ContactList = ({
                           {displayName}
                         </Typography>
                         {unreadCount > 0 && (
-                          <Badge badgeContent={unreadCount} color="white" />
+                          <Badge badgeContent={unreadCount} />
                         )}
                       </Box>
                     }
