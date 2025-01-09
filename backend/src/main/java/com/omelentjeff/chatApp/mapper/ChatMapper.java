@@ -23,7 +23,7 @@ public interface ChatMapper {
     default List<UserDTO> mapUsers(List<UserChat> userChats) {
         return userChats.stream()
                 .map(UserChat::getUser)
-                .map(user -> new UserDTO(user.getId(), user.getEmail(), user.getUsername()))
+                .map(user -> new UserDTO(user.getId(), user.getEmail(), user.getUsername())) // Convert UserEntity to UserDTO
                 .collect(Collectors.toList());
     }
 }

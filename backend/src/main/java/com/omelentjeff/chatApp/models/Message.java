@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Data
 @Builder
@@ -40,6 +41,13 @@ public class Message {
     private LocalDateTime updatedAt;
 
     private boolean isDeleted;
+
+    @Column(nullable = false)
+    private boolean readStatus;
+
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<MessageReadStatus> readStatuses;
+
 
     @PrePersist
     protected void onCreate() {

@@ -57,6 +57,10 @@ public class ChatService {
     public ChatDTO save(CreateChatRequest createChatRequest) {
 
         List<UserEntity> users = userRepository.findAllById(createChatRequest.getUserIds());
+        List<UserDTO> userDTOS = users.stream()
+                .map(userMapper::toDTO) // Use method reference
+                .toList();
+
 
         // Dynamically generate the chat name based on usernames
         String chatName = users.stream()
@@ -80,7 +84,12 @@ public class ChatService {
             userChatRepository.save(userChat);
         });
 
-        return chatMapper.toChatDTO(savedChat);
+        return ChatDTO.builder()
+                .chatId(savedChat.getChatId())
+                .chatName(chatName)
+                .isGroup(savedChat.isGroup())
+                .users(userDTOS)
+                .build();
     }
 
 }
