@@ -1,58 +1,81 @@
 import * as React from "react";
-import { Avatar, Chip, Menu, MenuItem, Box } from "@mui/material";
+import { Avatar, Chip, Popover, Box, Button } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import { useAuth } from "../hooks/AuthProvider";
 
 export default function AvatarChip() {
   const { logout, username } = useAuth();
-  const [anchorEl, setAnchorEl] = React.useState(null); // For managing menu state
+  const [anchorEl, setAnchorEl] = React.useState(null);
   const isOpen = Boolean(anchorEl);
 
-  // Handle opening the menu
-  const handleMenuOpen = (event) => {
+  const handlePopoverOpen = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  // Handle closing the menu
-  const handleMenuClose = () => {
+  const handlePopoverClose = () => {
     setAnchorEl(null);
   };
 
-  // Handle logout
   const handleLogout = () => {
-    handleMenuClose(); // Close the menu before logging out
+    handlePopoverClose();
     logout();
   };
-
   return (
     <>
       <Chip
         sx={{
           backgroundColor: "white",
-          cursor: "pointer", // Make the Chip clickable
+          cursor: "pointer",
           padding: "6px 12px",
           borderRadius: "20px",
-          boxShadow: 2, // Subtle shadow for better visual impact
+          boxShadow: 2,
           "&:hover": {
-            backgroundColor: "#f0f0f0", // Light hover effect
+            backgroundColor: "#f0f0f0",
           },
         }}
         icon={<FaceIcon />}
         label={username}
-        onClick={handleMenuOpen} // Open the menu on click
+        onClick={handlePopoverOpen}
       />
-      <Menu
+      <Popover
         anchorEl={anchorEl}
         open={isOpen}
-        onClose={handleMenuClose} // Close menu when clicking outside
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        transformOrigin={{ vertical: "top", horizontal: "right" }}
+        onClose={handlePopoverClose}
+        anchorOrigin={{ vertical: "center", horizontal: "right" }}
+        transformOrigin={{ vertical: "center", horizontal: "left" }}
+        PaperProps={{
+          sx: {
+            padding: 0.8,
+            borderRadius: 2,
+            boxShadow: 3,
+            backgroundColor: "#fff",
+            marginLeft: "2px",
+          },
+        }}
       >
-        <MenuItem onClick={handleLogout} sx={{ color: "#d32f2f" }}>
-          Logout
-        </MenuItem>{" "}
-        {/* Logout option with red color */}
-      </Menu>
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+          }}
+        >
+          <Button
+            onClick={handleLogout}
+            variant="contained"
+            color="error"
+            size="small"
+            sx={{
+              textTransform: "none",
+              borderRadius: "8px",
+              padding: "6px 16px",
+              boxShadow: 1,
+            }}
+          >
+            Logout
+          </Button>
+        </Box>
+      </Popover>
     </>
   );
 }
