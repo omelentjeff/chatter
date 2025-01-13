@@ -105,7 +105,7 @@ export default function ChatWindow({
 
       <form onSubmit={handleSendMessage}>
         <TextField
-          label="Type a message..."
+          label="Send a message..."
           variant="outlined"
           fullWidth
           value={message}
