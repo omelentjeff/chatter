@@ -34,9 +34,13 @@ const ContactList = ({
     >
       {/* Contacts Section */}
       <Box sx={{ height: "100%", overflowY: "auto", padding: 2 }}>
-        <Typography variant="h6" sx={{ marginBottom: 2 }}>
+        <Typography
+          variant="h5"
+          sx={{ marginBottom: 2, marginTop: 1, textAlign: "center" }}
+        >
           Chats
         </Typography>
+
         <List>
           {contacts.map((chat) => {
             const otherUser = chat.users.find((user) => user.id !== userId);
