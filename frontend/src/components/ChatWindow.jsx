@@ -1,5 +1,13 @@
 import React, { useEffect, useRef } from "react";
-import { Box, Paper, Typography, TextField, Button } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Typography,
+  TextField,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import SendIcon from "@mui/icons-material/Send";
 
 export default function ChatWindow({
   selectedChat,
@@ -10,20 +18,17 @@ export default function ChatWindow({
   connected,
   userId,
 }) {
-  // Create a ref to the chat container
   const messagesEndRef = useRef(null);
   const otherUser = selectedChat
     ? selectedChat.users.find((user) => user.id !== userId)
     : null;
   const displayName = otherUser ? otherUser.username : "Unnamed Chat";
 
-  // Scroll to the bottom whenever chatMessages change
   useEffect(() => {
-    // Scroll to the bottom of the chat when new messages arrive
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
-  }, [chatMessages]); // Run whenever chatMessages are updated
+  }, [chatMessages]);
 
   return (
     <Paper
@@ -38,7 +43,7 @@ export default function ChatWindow({
       {selectedChat && (
         <Box
           sx={{
-            backgroundColor: "#2F80ED", // Blue color for banner
+            backgroundColor: "#2F80ED",
             color: "white",
             padding: "8px 12px",
             borderRadius: "8px",
@@ -95,8 +100,6 @@ export default function ChatWindow({
             Select a chat to view messages.
           </Typography>
         )}
-
-        {/* Scroll to bottom */}
         <div ref={messagesEndRef} />
       </Box>
 
@@ -107,17 +110,20 @@ export default function ChatWindow({
           fullWidth
           value={message}
           onChange={(e) => setMessage(e.target.value)}
-          sx={{ marginBottom: 1 }}
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  type="submit"
+                  color="primary"
+                  disabled={!connected || !message.trim()}
+                >
+                  <SendIcon />
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          disabled={!connected || !message.trim()}
-        >
-          Send
-        </Button>
       </form>
     </Paper>
   );
