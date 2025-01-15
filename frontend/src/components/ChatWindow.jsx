@@ -19,16 +19,30 @@ export default function ChatWindow({
   userId,
 }) {
   const messagesEndRef = useRef(null);
+  const initialRenderRef = useRef(true);
   const otherUser = selectedChat
     ? selectedChat.users.find((user) => user.id !== userId)
     : null;
   const displayName = otherUser ? otherUser.username : "Unnamed Chat";
 
-  useEffect(() => {
+  const scrollToBottom = (behavior = "smooth") => {
     if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
+      messagesEndRef.current.scrollIntoView({ behavior });
+    }
+  };
+
+  useEffect(() => {
+    if (initialRenderRef.current) {
+      scrollToBottom("auto");
+      initialRenderRef.current = false;
+    } else {
+      scrollToBottom("smooth");
     }
   }, [chatMessages]);
+
+  useEffect(() => {
+    initialRenderRef.current = true;
+  }, [selectedChat]);
 
   return (
     <Paper
