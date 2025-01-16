@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import {
   List,
   ListItem,
@@ -7,18 +7,35 @@ import {
   Box,
   Divider,
   Badge,
+  IconButton,
 } from "@mui/material";
+import AddIcon from "@mui/icons-material/Add";
 import { useAuth } from "../hooks/AuthProvider";
 import AvatarChip from "./AvatarChip";
+import SearchDialog from "./SearchDialog"; // Import the SearchDialog component
 
 const ContactList = ({
   selectedChat,
   setSelectedChat,
   contacts,
   latestMessages,
-  unreadCounts, // Add unreadCounts as a prop
+  unreadCounts,
 }) => {
   const { userId, username } = useAuth();
+  const [isDialogOpen, setDialogOpen] = useState(false);
+
+  const handleDialogOpen = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
+  const handleSearch = (query) => {
+    console.log("Search Query:", query);
+    // Implement search logic here
+  };
 
   return (
     <Box
@@ -34,19 +51,39 @@ const ContactList = ({
     >
       {/* Contacts Section */}
       <Box sx={{ height: "100%", overflowY: "auto", padding: 2 }}>
-        <Typography
-          variant="h5"
-          sx={{ marginBottom: 2, marginTop: 1, textAlign: "center" }}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            marginBottom: 2,
+          }}
         >
-          Chats
-        </Typography>
+          <Typography
+            variant="h5"
+            sx={{ marginTop: 1, textAlign: "center", flexGrow: 1 }}
+          >
+            Chats
+          </Typography>
+          <IconButton
+            onClick={handleDialogOpen}
+            sx={{
+              color: "white",
+              "&:hover": {
+                backgroundColor: "rgba(255, 255, 255, 0.2)",
+              },
+            }}
+          >
+            <AddIcon />
+          </IconButton>
+        </Box>
 
         <List>
           {contacts.map((chat) => {
             const otherUser = chat.users.find((user) => user.id !== userId);
             const displayName = otherUser ? otherUser.username : "Unnamed Chat";
             const latestMessage = latestMessages[chat.chatId];
-            const unreadCount = unreadCounts[chat.chatId] || 0; // Get unread count
+            const unreadCount = unreadCounts[chat.chatId] || 0;
 
             return (
               <React.Fragment key={chat.chatId}>
@@ -58,13 +95,13 @@ const ContactList = ({
                     borderRadius: "6px",
                     backgroundColor:
                       selectedChat?.chatId === chat.chatId
-                        ? "#5fb2ff" // Active background color for selected chat
-                        : "transparent", // Default background color for non-selected chats
+                        ? "#5fb2ff"
+                        : "transparent",
                     "&:hover": {
                       backgroundColor:
                         selectedChat?.chatId === chat.chatId
-                          ? "#5fb2ff" // Keep same color on hover if selected
-                          : "#7db3e5", // Change to a lighter color on hover if not selected
+                          ? "#5fb2ff"
+                          : "#7db3e5",
                     },
                   }}
                 >
@@ -148,6 +185,13 @@ const ContactList = ({
           <AvatarChip />
         </Box>
       </Box>
+
+      {/* Search Dialog */}
+      <SearchDialog
+        open={isDialogOpen}
+        onClose={handleDialogClose}
+        onSearch={handleSearch}
+      />
     </Box>
   );
 };
