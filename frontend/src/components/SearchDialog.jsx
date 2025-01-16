@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import { debounce } from "lodash";
 import { searchByUsername } from "../apiService";
 import { useAuth } from "../hooks/AuthProvider";
@@ -43,7 +43,7 @@ export default function SearchDialog({ open, onClose, onClick }) {
           setShowSuggestions(false);
         }
       }, 300),
-    []
+    [token] // Ensure that the token is used as a dependency
   );
 
   // Handle input changes and fetch suggestions
@@ -61,11 +61,20 @@ export default function SearchDialog({ open, onClose, onClick }) {
 
   // Handle suggestion click
   const handleSuggestionClick = (suggestion) => {
-    setInput(suggestion.name);
+    setInput(suggestion.username);
     setSuggestions([]);
     setShowSuggestions(false);
-    onClick(suggestion);
+    onClick(suggestion); // Pass the selected suggestion to the parent (ContactList)
   };
+
+  // Ensure that suggestions are reset when the dialog is closed or opened
+  useEffect(() => {
+    if (!open) {
+      setInput(""); // Clear the input when the dialog is closed
+      setSuggestions([]); // Clear the suggestions
+      setShowSuggestions(false); // Hide suggestions when dialog is closed
+    }
+  }, [open]);
 
   return (
     open && (
