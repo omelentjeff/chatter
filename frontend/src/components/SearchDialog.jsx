@@ -21,7 +21,7 @@ export default function SearchDialog({ open, onClose, onClick }) {
   const [input, setInput] = useState("");
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const { token } = useAuth();
+  const { token, username } = useAuth();
 
   // Function to fetch suggestions with debounce
   const fetchSuggestions = useMemo(
@@ -32,7 +32,13 @@ export default function SearchDialog({ open, onClose, onClick }) {
             const result = await searchByUsername(token, value);
             const suggestionsData = result.content || [];
             console.log("Suggestions:", suggestionsData);
-            setSuggestions(suggestionsData);
+
+            // Filter user itself from the suggestions
+            const filteredSuggestions = suggestionsData.filter(
+              (suggestion) => suggestion.username !== username
+            );
+
+            setSuggestions(filteredSuggestions);
             setShowSuggestions(true);
           } catch (error) {
             console.error("Error fetching suggestions:", error);
