@@ -28,7 +28,6 @@ export const fetchMessagesByChatId = async (token, chatId) => {
         Authorization: `Bearer ${token}`,
       },
     });
-    console.log("Messages fetched:", response.data);
     return response.data;
   } catch (error) {
     console.error(`Error fetching messages:`, error);
@@ -47,7 +46,6 @@ export const fetchUnreadCounts = async (token, userId) => {
         headers: { Authorization: `Bearer ${token}` },
       }
     );
-    console.log("Unread counts fetched:", response.data);
     return response.data;
   } catch (error) {
     console.error("Error fetching unread counts:", error);
@@ -55,8 +53,6 @@ export const fetchUnreadCounts = async (token, userId) => {
 };
 
 export const markMessagesAsRead = async (token, chatId, userId) => {
-  console.log("Token:", token);
-
   try {
     await axios.put(
       `${baseUrl}/messages/chat/${chatId}/markAsRead`,
@@ -69,5 +65,41 @@ export const markMessagesAsRead = async (token, chatId, userId) => {
     );
   } catch (error) {
     console.error("Error marking messages as read:", error);
+  }
+};
+
+export const searchByUsername = async (token, username) => {
+  try {
+    const response = await axios.get(
+      `${baseUrl}/users/search?username=${username}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error searching by username:", error);
+  }
+};
+
+export const createChat = async (token, userId, otherUserId) => {
+  try {
+    const response = await axios.post(
+      `${baseUrl}/chats`,
+      {
+        isGroup: false,
+        userIds: [userId, otherUserId],
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error("Error creating chat:", error);
   }
 };

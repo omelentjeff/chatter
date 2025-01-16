@@ -32,7 +32,6 @@ export default function Home() {
       try {
         const data = await fetchData(token, userId);
         setContacts(data);
-        console.log("Contacts fetched:", data);
 
         // Fetch latest message for each chat
         const latestMessagesData = {};
@@ -87,7 +86,6 @@ export default function Home() {
 
   // Fetch unread message counts on initial load
   useEffect(() => {
-    console.log("Fetching unread counts", selectedChat);
     const fetchUnreadCountsData = async () => {
       try {
         const unreadCounts = await fetchUnreadCounts(token, userId);
@@ -223,6 +221,7 @@ export default function Home() {
           selectedChat={selectedChat}
           setSelectedChat={setSelectedChat}
           contacts={contacts}
+          setContacts={setContacts}
           latestMessages={latestMessages}
           unreadCounts={unreadCounts}
         />

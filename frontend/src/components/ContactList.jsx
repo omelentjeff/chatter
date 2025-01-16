@@ -12,29 +12,65 @@ import {
 import AddIcon from "@mui/icons-material/Add";
 import { useAuth } from "../hooks/AuthProvider";
 import AvatarChip from "./AvatarChip";
-import SearchDialog from "./SearchDialog"; // Import the SearchDialog component
+import SearchDialog from "./SearchDialog";
+import { createChat } from "../apiService";
 
 const ContactList = ({
   selectedChat,
   setSelectedChat,
   contacts,
+  setContacts,
   latestMessages,
   unreadCounts,
 }) => {
-  const { userId, username } = useAuth();
+  const { userId, username, token } = useAuth();
   const [isDialogOpen, setDialogOpen] = useState(false);
 
+  // Open Search Dialog
   const handleDialogOpen = () => {
     setDialogOpen(true);
   };
 
+  // Close Search Dialog
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
 
-  const handleSearch = (query) => {
-    console.log("Search Query:", query);
-    // Implement search logic here
+  const handleSuggestionClick = async (suggestion) => {
+    console.log("Creating chat with:", suggestion);
+
+    // Check if chat already exists between the current user and the suggested user
+    const existingChat = contacts.find((chat) => {
+      const otherUser = chat.users.find((user) => user.id !== userId);
+      return otherUser && otherUser.id === suggestion.id; // Check if the suggestion is part of the chat
+    });
+
+    if (existingChat) {
+      console.log("Chat already exists between you and", suggestion.username);
+      return; // If chat exists, do not create a new one
+    }
+
+    try {
+      // Create chat with the selected user
+      const newChat = await createChat(token, userId, suggestion.id);
+
+      // Immediately add the new chat to the contact list for the creator (userId)
+      setContacts((prevContacts) => [
+        ...prevContacts,
+        {
+          chatId: newChat.chatId,
+          users: [
+            { id: userId, username }, // Current user
+            { id: suggestion.id, username: suggestion.username }, // Other user
+          ],
+        },
+      ]);
+
+      // Close the dialog
+      handleDialogClose();
+    } catch (error) {
+      console.error("Error creating chat:", error);
+    }
   };
 
   return (
@@ -78,6 +114,14 @@ const ContactList = ({
           </IconButton>
         </Box>
 
+        {/* Search Dialog */}
+        <SearchDialog
+          open={isDialogOpen}
+          onClose={handleDialogClose}
+          onClick={handleSuggestionClick}
+        />
+
+        {/* Render contacts, or filter by search query */}
         <List>
           {contacts.map((chat) => {
             const otherUser = chat.users.find((user) => user.id !== userId);
@@ -185,13 +229,6 @@ const ContactList = ({
           <AvatarChip />
         </Box>
       </Box>
-
-      {/* Search Dialog */}
-      <SearchDialog
-        open={isDialogOpen}
-        onClose={handleDialogClose}
-        onSearch={handleSearch}
-      />
     </Box>
   );
 };
