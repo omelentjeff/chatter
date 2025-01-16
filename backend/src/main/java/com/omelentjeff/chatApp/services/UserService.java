@@ -8,6 +8,9 @@ import com.omelentjeff.chatApp.models.UserEntity;
 import com.omelentjeff.chatApp.repositories.UserChatRepository;
 import com.omelentjeff.chatApp.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,10 +32,14 @@ public class UserService {
         return userChatService.getChatsById(id);
     }
 
-    public UserDTO findUserByUsername(String query) {
-        UserEntity foundUser = userRepository.findByUsernameIgnoreCase(query).orElseThrow(() -> new UserNotFoundException("User not found."));
+    public Page<UserDTO> findUserByUsername(String query, Pageable pageable) {
+        Page<UserEntity> userPage = userRepository.findByUsernameContainingIgnoreCase(query, pageable);
 
-        return userMapper.toDTO(foundUser);
+        List<UserDTO> userDTOS = userPage.stream()
+                .map(userMapper::toDTO)
+                .toList();
+
+        return new PageImpl<>(userDTOS, pageable, userPage.getTotalElements());
 
     }
 }
