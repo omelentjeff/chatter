@@ -28,6 +28,8 @@ export default function Home() {
 
   // Fetch initial contact list and latest messages
   useEffect(() => {
+    if (!userId || !token) return;
+
     const fetchContacts = async () => {
       try {
         const data = await fetchData(token, userId);
@@ -86,6 +88,8 @@ export default function Home() {
 
   // Fetch unread message counts on initial load
   useEffect(() => {
+    if (!userId || !token) return;
+
     const fetchUnreadCountsData = async () => {
       try {
         const unreadCounts = await fetchUnreadCounts(token, userId);

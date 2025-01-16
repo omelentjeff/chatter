@@ -95,11 +95,13 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const logout = () => {
+  const logout = (cleanupCallback) => {
     setUsername(null);
     setRole(null);
     setToken("");
+    setUserId(null);
     localStorage.removeItem("token");
+    cleanupCallback();
     navigate("/");
   };
 

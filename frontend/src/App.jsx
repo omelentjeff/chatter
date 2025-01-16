@@ -5,8 +5,9 @@ import MyAppBar from "./components/MyAppBar";
 import Home from "./components/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
-import { AuthProvider, useAuth } from "./hooks/AuthProvider";
 import { WebSocketProvider } from "./hooks/WebSocketProvider";
+import { AuthProvider, useAuth } from "./hooks/AuthProvider";
+import { Web } from "@mui/icons-material";
 
 function App() {
   return (

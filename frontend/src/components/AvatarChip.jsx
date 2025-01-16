@@ -2,9 +2,11 @@ import * as React from "react";
 import { Avatar, Chip, Popover, Box, Button } from "@mui/material";
 import FaceIcon from "@mui/icons-material/Face";
 import { useAuth } from "../hooks/AuthProvider";
+import { useWebSocket } from "../hooks/WebSocketProvider";
 
 export default function AvatarChip() {
   const { logout, username } = useAuth();
+  const { resetWebSocketState } = useWebSocket();
   const [anchorEl, setAnchorEl] = React.useState(null);
   const isOpen = Boolean(anchorEl);
 
@@ -18,7 +20,7 @@ export default function AvatarChip() {
 
   const handleLogout = () => {
     handlePopoverClose();
-    logout();
+    logout(resetWebSocketState);
   };
   return (
     <>
