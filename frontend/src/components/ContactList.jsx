@@ -92,7 +92,7 @@ const ContactList = ({
             display: "flex",
             justifyContent: "space-between",
             alignItems: "center",
-            marginBottom: 2,
+            marginBottom: 4,
           }}
         >
           <Typography
@@ -185,11 +185,36 @@ const ContactList = ({
                     }
                     secondary={
                       latestMessage && latestMessage.sender ? (
-                        <Typography variant="body2" color="white">
-                          {latestMessage.sender === username
-                            ? `You: ${latestMessage.content}`
-                            : `${latestMessage.sender}: ${latestMessage.content}`}
-                        </Typography>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                          }}
+                        >
+                          <Typography
+                            variant="body2"
+                            color="white"
+                            sx={{
+                              display: "inline-block",
+                              maxWidth: "100%",
+                              whiteSpace: "nowrap",
+                              overflow: "hidden",
+                              textOverflow: "ellipsis",
+                            }}
+                          >
+                            {latestMessage.sender === username
+                              ? `You: ${latestMessage.content}`
+                              : `${latestMessage.sender}: ${latestMessage.content}`}
+                          </Typography>
+                          <Typography variant="caption" color="white">
+                            {new Date(
+                              latestMessage.createdAt
+                            ).toLocaleTimeString("en-US", {
+                              hour: "numeric",
+                              minute: "numeric",
+                            })}
+                          </Typography>
+                        </Box>
                       ) : (
                         <Typography variant="body2" color="white">
                           No messages
