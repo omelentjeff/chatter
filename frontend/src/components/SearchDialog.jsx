@@ -33,6 +33,7 @@ export default function SearchDialog({ onClose, onClick }) {
 
             if (suggestionsData && suggestionsData.username === username) {
               setSuggestion(null);
+              setShowSuggestion(true);
               return;
             }
 
