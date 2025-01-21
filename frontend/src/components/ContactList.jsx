@@ -8,6 +8,9 @@ import {
   Divider,
   Badge,
   IconButton,
+  Dialog,
+  DialogTitle,
+  DialogContent,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useAuth } from "../hooks/AuthProvider";
@@ -26,12 +29,10 @@ const ContactList = ({
   const { userId, username, token } = useAuth();
   const [isDialogOpen, setDialogOpen] = useState(false);
 
-  // Open Search Dialog
   const handleDialogOpen = () => {
     setDialogOpen(true);
   };
 
-  // Close Search Dialog
   const handleDialogClose = () => {
     setDialogOpen(false);
   };
@@ -39,22 +40,21 @@ const ContactList = ({
   const handleSuggestionClick = async (suggestion) => {
     console.log("Creating chat with:", suggestion);
 
-    // Check if chat already exists between the current user and the suggested user
     const existingChat = contacts.find((chat) => {
       const otherUser = chat.users.find((user) => user.id !== userId);
-      return otherUser && otherUser.id === suggestion.id; // Check if the suggestion is part of the chat
+      return otherUser && otherUser.id === suggestion.id;
     });
 
     if (existingChat) {
       console.log("Chat already exists between you and", suggestion.username);
-      return; // If chat exists, do not create a new one
+      setSelectedChat(existingChat);
+      handleDialogClose();
+      return;
     }
 
     try {
-      // Create chat with the selected user
       const newChat = await createChat(token, userId, suggestion.id);
 
-      // Immediately add the new chat to the contact list for the creator (userId)
       setContacts((prevContacts) => [
         {
           chatId: newChat.chatId,
@@ -63,12 +63,11 @@ const ContactList = ({
             { id: suggestion.id, username: suggestion.username },
           ],
         },
-        ...prevContacts, // Keep the rest of the chats
+        ...prevContacts,
       ]);
 
-      setSelectedChat(newChat),
-        // Close the dialog
-        handleDialogClose();
+      setSelectedChat(newChat);
+      handleDialogClose();
     } catch (error) {
       console.error("Error creating chat:", error);
     }
@@ -106,23 +105,36 @@ const ContactList = ({
             onClick={handleDialogOpen}
             sx={{
               color: "white",
-              "&:hover": {
-                backgroundColor: "rgba(255, 255, 255, 0.2)",
-              },
+              "&:hover": { backgroundColor: "rgba(255, 255, 255, 0.2)" },
             }}
           >
             <AddIcon />
           </IconButton>
         </Box>
 
-        {/* Search Dialog */}
-        <SearchDialog
+        {/* Search Dialog Modal */}
+        <Dialog
           open={isDialogOpen}
           onClose={handleDialogClose}
-          onClick={handleSuggestionClick}
-        />
+          fullWidth
+          maxWidth="sm"
+        >
+          <DialogTitle>Search for a User</DialogTitle>
+          <DialogContent
+            sx={{
+              minHeight: "35vh", // Expand dialog based on suggestions
+              overflowY: "auto",
+              transition: "max-height 0.3s ease", // Smooth transition
+            }}
+          >
+            <SearchDialog
+              onClose={handleDialogClose}
+              onClick={handleSuggestionClick}
+            />
+          </DialogContent>
+        </Dialog>
 
-        {/* Render contacts, or filter by search query */}
+        {/* Render contacts */}
         <List>
           {contacts.map((chat) => {
             const otherUser = chat.users.find((user) => user.id !== userId);
@@ -173,36 +185,11 @@ const ContactList = ({
                     }
                     secondary={
                       latestMessage && latestMessage.sender ? (
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                          }}
-                        >
-                          <Typography
-                            variant="body2"
-                            color="white"
-                            sx={{
-                              display: "inline-block",
-                              maxWidth: "100%",
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                            }}
-                          >
-                            {latestMessage.sender === username
-                              ? `You: ${latestMessage.content}`
-                              : `${latestMessage.sender}: ${latestMessage.content}`}
-                          </Typography>
-                          <Typography variant="caption" color="white">
-                            {new Date(
-                              latestMessage.createdAt
-                            ).toLocaleTimeString("en-US", {
-                              hour: "numeric",
-                              minute: "numeric",
-                            })}
-                          </Typography>
-                        </Box>
+                        <Typography variant="body2" color="white">
+                          {latestMessage.sender === username
+                            ? `You: ${latestMessage.content}`
+                            : `${latestMessage.sender}: ${latestMessage.content}`}
+                        </Typography>
                       ) : (
                         <Typography variant="body2" color="white">
                           No messages
@@ -218,7 +205,7 @@ const ContactList = ({
         </List>
       </Box>
 
-      {/* User Info and Logout */}
+      {/* User Info Section */}
       <Box
         sx={{
           padding: 2,
@@ -226,9 +213,7 @@ const ContactList = ({
           backgroundColor: "#2F80ED",
         }}
       >
-        <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-          <AvatarChip />
-        </Box>
+        <AvatarChip />
       </Box>
     </Box>
   );

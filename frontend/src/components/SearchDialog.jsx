@@ -17,145 +17,113 @@ import {
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 
-export default function SearchDialog({ open, onClose, onClick }) {
+export default function SearchDialog({ onClose, onClick }) {
   const [input, setInput] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestion, setSuggestion] = useState(null);
+  const [showSuggestion, setShowSuggestion] = useState(false);
   const { token, username } = useAuth();
 
-  // Function to fetch suggestions with debounce
   const fetchSuggestions = useMemo(
     () =>
       debounce(async (value) => {
         if (value) {
           try {
             const result = await searchByUsername(token, value);
-            const suggestionsData = result.content || [];
-            console.log("Suggestions:", suggestionsData);
+            const suggestionsData = result || null;
 
-            // Filter user itself from the suggestions
-            const filteredSuggestions = suggestionsData.filter(
-              (suggestion) => suggestion.username !== username
-            );
-
-            setSuggestions(filteredSuggestions);
-            setShowSuggestions(true);
+            setSuggestion(suggestionsData);
+            setShowSuggestion(true);
           } catch (error) {
             console.error("Error fetching suggestions:", error);
-            setSuggestions([]);
+            setSuggestion(null);
           }
         } else {
-          setSuggestions([]);
-          setShowSuggestions(false);
+          setSuggestion(null);
+          setShowSuggestion(false);
         }
       }, 300),
-    [token] // Ensure that the token is used as a dependency
+    [token]
   );
 
-  // Handle input changes and fetch suggestions
   const handleInputChange = (e) => {
     setInput(e.target.value);
     fetchSuggestions(e.target.value);
   };
 
-  // Handle input clear
   const handleClearInput = () => {
     setInput("");
-    setSuggestions([]);
-    setShowSuggestions(false);
+    setSuggestion(null);
+    setShowSuggestion(false);
   };
 
-  // Handle suggestion click
   const handleSuggestionClick = (suggestion) => {
     setInput(suggestion.username);
-    setSuggestions([]);
-    setShowSuggestions(false);
-    onClick(suggestion); // Pass the selected suggestion to the parent (ContactList)
+    setSuggestion(null);
+    setShowSuggestion(false);
+    onClick(suggestion);
   };
 
-  // Ensure that suggestions are reset when the dialog is closed or opened
-  useEffect(() => {
-    if (!open) {
-      setInput(""); // Clear the input when the dialog is closed
-      setSuggestions([]); // Clear the suggestions
-      setShowSuggestions(false); // Hide suggestions when dialog is closed
-    }
-  }, [open]);
-
   return (
-    open && (
-      <Box
-        sx={{
-          width: "100%",
-          maxWidth: 500,
-          margin: "auto",
-          mt: 4,
-          position: "relative",
+    <Box
+      sx={{
+        width: "100%",
+        maxWidth: 500,
+        margin: "auto",
+        mt: 2,
+        position: "relative",
+      }}
+    >
+      <TextField
+        fullWidth
+        variant="outlined"
+        placeholder="Search by username"
+        value={input}
+        onChange={handleInputChange}
+        InputProps={{
+          startAdornment: (
+            <InputAdornment position="start">
+              <SearchIcon />
+            </InputAdornment>
+          ),
+          endAdornment: input && (
+            <InputAdornment position="end">
+              <IconButton onClick={handleClearInput}>
+                <ClearIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
         }}
-      >
-        <form onSubmit={(e) => e.preventDefault()}>
-          <Grid container spacing={1}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                variant="outlined"
-                placeholder="Search by username"
-                value={input || ""}
-                onChange={handleInputChange}
-                InputProps={{
-                  startAdornment: (
-                    <InputAdornment position="start">
-                      <SearchIcon />
-                    </InputAdornment>
-                  ),
-                  endAdornment: input && (
-                    <InputAdornment position="end">
-                      <IconButton onClick={handleClearInput}>
-                        <ClearIcon />
-                      </IconButton>
-                    </InputAdornment>
-                  ),
-                }}
-              />
-            </Grid>
-          </Grid>
+      />
 
-          {/* Suggestion dropdown */}
-          {showSuggestions && (
-            <Paper
-              elevation={3}
-              sx={{
-                position: "absolute",
-                top: "64px",
-                width: "100%",
-                zIndex: 10,
-                maxHeight: 400,
-                overflowY: "auto",
-                borderRadius: 1,
-                boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.1)",
-              }}
-            >
-              <List dense>
-                {suggestions.length === 0 ? (
-                  <ListItem>
-                    <ListItemText>No results found</ListItemText>
-                  </ListItem>
-                ) : (
-                  suggestions.map((suggestion, index) => (
-                    <ListItem
-                      key={index}
-                      button
-                      onClick={() => handleSuggestionClick(suggestion)}
-                    >
-                      <ListItemText primary={suggestion.username} />
-                    </ListItem>
-                  ))
-                )}
-              </List>
-            </Paper>
-          )}
-        </form>
-      </Box>
-    )
+      {showSuggestion && (
+        <Paper
+          elevation={3}
+          sx={{
+            position: "absolute",
+            width: "100%",
+            zIndex: 2000,
+            maxHeight: 400,
+
+            borderRadius: 1,
+          }}
+        >
+          <List dense>
+            {suggestion === null ? (
+              <ListItem>
+                <ListItemText>No results found</ListItemText>
+              </ListItem>
+            ) : (
+              <ListItem
+                key={suggestion.id}
+                button
+                onClick={() => handleSuggestionClick(suggestion)}
+              >
+                <ListItemText primary={suggestion.username} />
+              </ListItem>
+            )}
+          </List>
+        </Paper>
+      )}
+    </Box>
   );
 }
