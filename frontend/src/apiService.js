@@ -78,6 +78,11 @@ export const searchByUsername = async (token, username) => {
         },
       }
     );
+
+    if (response.status === 200 && !response.data) {
+      return null;
+    }
+
     return response.data;
   } catch (error) {
     console.error("Error searching by username:", error);
