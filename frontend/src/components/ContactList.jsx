@@ -56,14 +56,14 @@ const ContactList = ({
 
       // Immediately add the new chat to the contact list for the creator (userId)
       setContacts((prevContacts) => [
-        ...prevContacts,
         {
           chatId: newChat.chatId,
           users: [
-            { id: userId, username }, // Current user
-            { id: suggestion.id, username: suggestion.username }, // Other user
+            { id: userId, username },
+            { id: suggestion.id, username: suggestion.username },
           ],
         },
+        ...prevContacts, // Keep the rest of the chats
       ]);
 
       setSelectedChat(newChat),

@@ -174,15 +174,18 @@ export default function Home() {
 
   // Sort contacts by latest message's createdAt
   useEffect(() => {
-    const sortedContacts = [...contacts].sort((a, b) => {
-      const latestA =
-        latestMessages[a.chatId]?.createdAt || "1970-01-01T00:00:00Z";
-      const latestB =
-        latestMessages[b.chatId]?.createdAt || "1970-01-01T00:00:00Z";
-      return new Date(latestB) - new Date(latestA);
-    });
-    setContacts(sortedContacts);
-  }, [latestMessages, contacts]);
+    if (contacts.length > 0) {
+      setContacts((prevContacts) =>
+        [...prevContacts].sort((a, b) => {
+          const latestA =
+            latestMessages[a.chatId]?.createdAt || "1970-01-01T00:00:00Z";
+          const latestB =
+            latestMessages[b.chatId]?.createdAt || "1970-01-01T00:00:00Z";
+          return new Date(latestB) - new Date(latestA);
+        })
+      );
+    }
+  }, [latestMessages]);
 
   const handleSendMessage = (event) => {
     event.preventDefault();
