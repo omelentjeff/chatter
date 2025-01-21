@@ -66,8 +66,9 @@ const ContactList = ({
         },
       ]);
 
-      // Close the dialog
-      handleDialogClose();
+      setSelectedChat(newChat),
+        // Close the dialog
+        handleDialogClose();
     } catch (error) {
       console.error("Error creating chat:", error);
     }
