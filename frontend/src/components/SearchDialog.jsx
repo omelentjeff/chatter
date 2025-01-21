@@ -31,6 +31,11 @@ export default function SearchDialog({ onClose, onClick }) {
             const result = await searchByUsername(token, value);
             const suggestionsData = result || null;
 
+            if (suggestionsData && suggestionsData.username === username) {
+              setSuggestion(null);
+              return;
+            }
+
             setSuggestion(suggestionsData);
             setShowSuggestion(true);
           } catch (error) {
