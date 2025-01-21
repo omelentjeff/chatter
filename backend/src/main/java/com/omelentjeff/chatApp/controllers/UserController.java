@@ -35,16 +35,14 @@ public class UserController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<Page<UserDTO>> searchUserByUsername (
-            @RequestParam(required = false) String username,
-            @PageableDefault(size = 10, sort = "username", direction = Sort.Direction.ASC) Pageable pageable) {
-        Page<UserDTO> users = userService.findUserByUsername(username, pageable);
+    public ResponseEntity<UserDTO> searchUserByUsername (
+            @RequestParam(required = false) String username) {
+        UserDTO user = userService.findUserByUsername(username);
 
-
-        if (users.hasContent()) {
-            return ResponseEntity.ok(users);
+        if (user == null) {
+            return ResponseEntity.ok().build();
         }
 
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.ok(user);
     }
 }

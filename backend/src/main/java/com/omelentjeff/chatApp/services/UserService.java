@@ -14,6 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -32,14 +33,10 @@ public class UserService {
         return userChatService.getChatsById(id);
     }
 
-    public Page<UserDTO> findUserByUsername(String query, Pageable pageable) {
-        Page<UserEntity> userPage = userRepository.findByUsernameContainingIgnoreCase(query, pageable);
+    public UserDTO findUserByUsername(String query) {
+        Optional<UserEntity> foundUser = userRepository.findByUsername(query);
 
-        List<UserDTO> userDTOS = userPage.stream()
-                .map(userMapper::toDTO)
-                .toList();
-
-        return new PageImpl<>(userDTOS, pageable, userPage.getTotalElements());
+        return foundUser.map(userMapper::toDTO).orElse(null);
 
     }
 }
