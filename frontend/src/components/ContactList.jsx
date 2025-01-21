@@ -122,7 +122,7 @@ const ContactList = ({
           <DialogTitle>Search for a User</DialogTitle>
           <DialogContent
             sx={{
-              minHeight: "35vh", // Expand dialog based on suggestions
+              minHeight: "20vh", // Expand dialog based on suggestions
               overflowY: "auto",
               transition: "max-height 0.3s ease", // Smooth transition
             }}
