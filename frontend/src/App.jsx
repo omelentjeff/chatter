@@ -1,7 +1,6 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
-import Signup from "./components/Signup";
-import MyAppBar from "./components/MyAppBar";
+import SignupPage from "./components/SignupPage";
 import Home from "./components/Home";
 import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
@@ -40,7 +39,7 @@ function AppLayout() {
           path="/signup"
           element={
             <PublicRoute>
-              <Signup />
+              <SignupPage />
             </PublicRoute>
           }
         />
