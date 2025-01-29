@@ -18,6 +18,8 @@ export default function Home() {
     sendMessage,
     messages: websocketMessages,
     clearMessages,
+    newChats,
+    clearNewChats,
   } = useWebSocket();
   const { userId, token, username } = useAuth();
   const [selectedChat, setSelectedChat] = useState(null);
@@ -65,6 +67,24 @@ export default function Home() {
 
     fetchContacts();
   }, [token, userId]);
+
+  useEffect(() => {
+    if (newChats.length > 0) {
+      setContacts((prevContacts) => {
+        const updatedContacts = [...prevContacts];
+
+        newChats.forEach((newChat) => {
+          // Avoid duplicate chats
+          if (!updatedContacts.some((chat) => chat.chatId === newChat.chatId)) {
+            updatedContacts.unshift(newChat);
+          }
+        });
+
+        return updatedContacts;
+      });
+      clearNewChats();
+    }
+  }, [newChats]);
 
   // Fetch messages for selected chat
   useEffect(() => {

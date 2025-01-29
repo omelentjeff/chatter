@@ -10,6 +10,7 @@ export const WebSocketProvider = ({ children }) => {
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
   const [messages, setMessages] = useState([]);
+  const [newChats, setNewChats] = useState([]);
 
   useEffect(() => {
     if (userId && token) {
@@ -27,6 +28,13 @@ export const WebSocketProvider = ({ children }) => {
             const message = JSON.parse(payload.body);
             setMessages((prevMessages) => [...prevMessages, message]);
             console.log("Received message:", message);
+          });
+
+          client.subscribe(`/user/${userId}/queue/new-chat`, (payload) => {
+            const newChat = JSON.parse(payload.body);
+            console.log("New chat received:", newChat);
+
+            setNewChats((prevChats) => [...prevChats, newChat]);
           });
         },
         (error) => {
@@ -73,14 +81,20 @@ export const WebSocketProvider = ({ children }) => {
     setMessages([]);
   };
 
+  const clearNewChats = () => {
+    setNewChats([]); // Clear after contacts are updated
+  };
+
   return (
     <WebSocketContext.Provider
       value={{
         connected,
         sendMessage,
         messages,
+        newChats,
         clearMessages,
         resetWebSocketState,
+        clearNewChats,
       }}
     >
       {children}
