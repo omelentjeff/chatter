@@ -37,6 +37,13 @@ public class ChatMessageController {
                 "/queue/messages",
                 savedMessage
         );
+
+        // Notify the recipient that a new chat has been created
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(savedMessage.getRecipient().getId()),
+                "/queue/new-chat",
+                savedMessage.getChat()  // Send chat details
+        );
     }
 
 
