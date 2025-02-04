@@ -46,18 +46,5 @@ CREATE TABLE message_read_status (
     FOREIGN KEY (user_id) REFERENCES user_entity (id) ON DELETE CASCADE
 );
 
-DO
-$$
-BEGIN
-    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'chatter_admin') THEN
-        CREATE USER chatter_user WITH PASSWORD 'chatter_adminPW1!';
-    END IF;
-END
-$$;
-GRANT CONNECT ON DATABASE chatter TO chatter_admin;
-GRANT USAGE ON SCHEMA public TO chatter_admin;
-GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA public TO chatter_admin;
-GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA public TO chatter_admin;
-
 
 

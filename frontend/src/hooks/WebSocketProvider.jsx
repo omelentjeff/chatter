@@ -6,6 +6,7 @@ import { useAuth } from "./AuthProvider";
 const WebSocketContext = createContext();
 
 export const WebSocketProvider = ({ children }) => {
+  const baseUrl = `${import.meta.env.VITE_API_URL}`;
   const { userId, token } = useAuth();
   const [stompClient, setStompClient] = useState(null);
   const [connected, setConnected] = useState(false);
@@ -14,7 +15,9 @@ export const WebSocketProvider = ({ children }) => {
 
   useEffect(() => {
     if (userId && token) {
-      const socket = new SockJS("http://localhost:8080/ws");
+      const socket = new SockJS(
+        "https://chatter-api--n16cg2g.mangocliff-4c9fb8c2.northeurope.azurecontainerapps.io/ws"
+      );
       const client = over(socket);
 
       client.connect(
