@@ -192,9 +192,10 @@ export default function Login() {
         </Box>
 
         {/* Divider */}
-        <Divider sx={{ width: "100%", my: 3 }}>OR</Divider>
+        {/*<Divider sx={{ width: "100%", my: 3 }}>OR</Divider>*/}
 
         {/* Social Login Buttons */}
+        {/*
         <SocialLoginButton
           provider="GitHub"
           color="rgb(36,41,46)" // GitHub black
@@ -213,6 +214,7 @@ export default function Login() {
           icon={<Facebook />}
           onClick={handleSocialLogin}
         />
+        */}
       </Box>
     </Container>
   );
