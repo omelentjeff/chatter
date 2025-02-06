@@ -2,6 +2,6 @@
 
 ### Work in progress
 
-### <a href="https://chatter.mangocliff-4c9fb8c2.northeurope.azurecontainerapps.io"> Try it out!</a>
+### <a href="https://chatter.mangocliff-4c9fb8c2.northeurope.azurecontainerapps.io"> Try it out!</a> (Launching might take some time if app is sleeping)
 
 Full stack real time one-on-one chat application. Main goal is to practice web sockets and user authentication with Spring Boot and React.
