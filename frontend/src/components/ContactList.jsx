@@ -148,6 +148,15 @@ const ContactList = ({
           >
             <CircularProgress color="inherit" />
           </Box>
+        ) : contacts.length === 0 ? ( // Show message when there are no contacts
+          <Typography
+            variant="body1"
+            textAlign="center"
+            color="white"
+            sx={{ mt: 4 }}
+          >
+            Start by searching a contact
+          </Typography>
         ) : (
           <List>
             {contacts.map((chat) => {
