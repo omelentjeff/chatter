@@ -1,4 +1,4 @@
-# chat-app
+# Chatter
 
 ### Work in progress
 
