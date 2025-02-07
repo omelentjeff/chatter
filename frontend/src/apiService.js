@@ -108,3 +108,14 @@ export const createChat = async (token, userId, otherUserId) => {
     console.error("Error creating chat:", error);
   }
 };
+
+export const healthCheck = async () => {
+  try {
+    const response = await axios.get(`${baseUrl}/health-check`);
+    return response.data;
+  } catch (error) {
+    console.error("Error checking health:", error);
+  }
+};
+
+// cosmos: xymboz-nUxwun-wybha9

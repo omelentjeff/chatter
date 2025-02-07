@@ -27,12 +27,14 @@ export default function Home() {
   const [latestMessages, setLatestMessages] = useState({});
   const [contacts, setContacts] = useState([]);
   const [unreadCounts, setUnreadCounts] = useState({});
+  const [loading, setLoading] = useState(true);
 
   // Fetch initial contact list and latest messages
   useEffect(() => {
     if (!userId || !token) return;
 
     const fetchContacts = async () => {
+      setLoading(true);
       try {
         const data = await fetchData(token, userId);
         setContacts(data);
@@ -62,6 +64,8 @@ export default function Home() {
         setLatestMessages(latestMessagesData);
       } catch (error) {
         console.error("Error fetching contacts:", error);
+      } finally {
+        setLoading(false);
       }
     };
 
@@ -251,6 +255,7 @@ export default function Home() {
           setContacts={setContacts}
           latestMessages={latestMessages}
           unreadCounts={unreadCounts}
+          loading={loading}
         />
       </Grid>
 

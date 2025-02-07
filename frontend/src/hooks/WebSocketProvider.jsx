@@ -16,7 +16,7 @@ export const WebSocketProvider = ({ children }) => {
   useEffect(() => {
     if (userId && token) {
       const socket = new SockJS(
-        "https://chatter-api--n16cg2g.mangocliff-4c9fb8c2.northeurope.azurecontainerapps.io/ws"
+        "https://chatter-api--q83pi5q.icysand-3b71e0c3.northeurope.azurecontainerapps.io/ws"
       );
       const client = over(socket);
 

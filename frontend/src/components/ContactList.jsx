@@ -11,6 +11,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
+  CircularProgress,
 } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import { useAuth } from "../hooks/AuthProvider";
@@ -25,6 +26,7 @@ const ContactList = ({
   setContacts,
   latestMessages,
   unreadCounts,
+  loading,
 }) => {
   const { userId, username, token } = useAuth();
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -135,99 +137,114 @@ const ContactList = ({
         </Dialog>
 
         {/* Render contacts */}
-        <List>
-          {contacts.map((chat) => {
-            const otherUser = chat.users.find((user) => user.id !== userId);
-            const displayName = otherUser ? otherUser.username : "Unnamed Chat";
-            const latestMessage = latestMessages[chat.chatId];
-            const unreadCount = unreadCounts[chat.chatId] || 0;
+        {loading ? (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              height: "50vh",
+            }}
+          >
+            <CircularProgress color="inherit" />
+          </Box>
+        ) : (
+          <List>
+            {contacts.map((chat) => {
+              const otherUser = chat.users.find((user) => user.id !== userId);
+              const displayName = otherUser
+                ? otherUser.username
+                : "Unnamed Chat";
+              const latestMessage = latestMessages[chat.chatId];
+              const unreadCount = unreadCounts[chat.chatId] || 0;
 
-            return (
-              <React.Fragment key={chat.chatId}>
-                <ListItem
-                  button
-                  onClick={() => setSelectedChat(chat)}
-                  sx={{
-                    paddingBottom: 1,
-                    borderRadius: "6px",
-                    backgroundColor:
-                      selectedChat?.chatId === chat.chatId
-                        ? "#5fb2ff"
-                        : "transparent",
-                    "&:hover": {
+              return (
+                <React.Fragment key={chat.chatId}>
+                  <ListItem
+                    button
+                    onClick={() => setSelectedChat(chat)}
+                    sx={{
+                      paddingBottom: 1,
+                      borderRadius: "6px",
                       backgroundColor:
                         selectedChat?.chatId === chat.chatId
                           ? "#5fb2ff"
-                          : "#7db3e5",
-                    },
-                  }}
-                >
-                  <ListItemText
-                    primary={
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "space-between",
-                          alignItems: "center",
-                        }}
-                      >
-                        <Typography
-                          variant="body1"
-                          fontWeight="bold"
-                          fontSize="18px"
-                        >
-                          {displayName}
-                        </Typography>
-                        {unreadCount > 0 && (
-                          <Badge badgeContent={unreadCount} />
-                        )}
-                      </Box>
-                    }
-                    secondary={
-                      latestMessage && latestMessage.sender ? (
+                          : "transparent",
+                      "&:hover": {
+                        backgroundColor:
+                          selectedChat?.chatId === chat.chatId
+                            ? "#5fb2ff"
+                            : "#7db3e5",
+                      },
+                    }}
+                  >
+                    <ListItemText
+                      primary={
                         <Box
                           sx={{
                             display: "flex",
                             justifyContent: "space-between",
+                            alignItems: "center",
                           }}
                         >
                           <Typography
-                            variant="body2"
-                            color="white"
+                            variant="body1"
+                            fontWeight="bold"
+                            fontSize="18px"
+                          >
+                            {displayName}
+                          </Typography>
+                          {unreadCount > 0 && (
+                            <Badge badgeContent={unreadCount} />
+                          )}
+                        </Box>
+                      }
+                      secondary={
+                        latestMessage && latestMessage.sender ? (
+                          <Box
                             sx={{
-                              display: "inline-block",
-                              maxWidth: "100%",
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
+                              display: "flex",
+                              justifyContent: "space-between",
                             }}
                           >
-                            {latestMessage.sender === username
-                              ? `You: ${latestMessage.content}`
-                              : `${latestMessage.sender}: ${latestMessage.content}`}
+                            <Typography
+                              variant="body2"
+                              color="white"
+                              sx={{
+                                display: "inline-block",
+                                maxWidth: "100%",
+                                whiteSpace: "nowrap",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                              }}
+                            >
+                              {latestMessage.sender === username
+                                ? `You: ${latestMessage.content}`
+                                : `${latestMessage.sender}: ${latestMessage.content}`}
+                            </Typography>
+                            <Typography variant="caption" color="white">
+                              {new Date(
+                                latestMessage.createdAt
+                              ).toLocaleTimeString("en-US", {
+                                hour: "numeric",
+                                minute: "numeric",
+                              })}
+                            </Typography>
+                          </Box>
+                        ) : (
+                          <Typography variant="body2" color="white">
+                            No messages
                           </Typography>
-                          <Typography variant="caption" color="white">
-                            {new Date(
-                              latestMessage.createdAt
-                            ).toLocaleTimeString("en-US", {
-                              hour: "numeric",
-                              minute: "numeric",
-                            })}
-                          </Typography>
-                        </Box>
-                      ) : (
-                        <Typography variant="body2" color="white">
-                          No messages
-                        </Typography>
-                      )
-                    }
-                  />
-                </ListItem>
-                <Divider sx={{ backgroundColor: "white" }} />
-              </React.Fragment>
-            );
-          })}
-        </List>
+                        )
+                      }
+                    />
+                  </ListItem>
+                  <Divider sx={{ backgroundColor: "white" }} />
+                </React.Fragment>
+              );
+            })}
+          </List>
+        )}
       </Box>
 
       {/* User Info Section */}

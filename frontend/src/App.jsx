@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import LoginPage from "./components/LoginPage";
 import SignupPage from "./components/SignupPage";
@@ -6,9 +7,21 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import PublicRoute from "./components/PublicRoute";
 import { WebSocketProvider } from "./hooks/WebSocketProvider";
 import { AuthProvider, useAuth } from "./hooks/AuthProvider";
-import { Web } from "@mui/icons-material";
+import { healthCheck } from "./apiService";
 
 function App() {
+  useEffect(() => {
+    const healthCheckAPI = async () => {
+      try {
+        const response = await healthCheck();
+        console.log("Health check response:", response);
+      } catch (error) {
+        console.error("Error checking health:", error);
+      }
+    };
+    healthCheckAPI();
+  }, []);
+
   return (
     <Router>
       <AuthProvider>

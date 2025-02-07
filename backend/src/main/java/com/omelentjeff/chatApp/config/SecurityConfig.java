@@ -30,7 +30,7 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(corsConfigurationSource())) // Enable CORS with custom config
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/v1/auth/**", "/ws/**", "/ws/info/**") // Allow unauthenticated access to WebSocket
+                        .requestMatchers("/api/v1/auth/**", "/api/v1/health-check", "/ws/**", "/ws/info/**") // Allow unauthenticated access to WebSocket
                         .permitAll()
                         .anyRequest()
                         .authenticated()
@@ -50,7 +50,7 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:3000",
                 "http://localhost:5173",
-                "https://chatter.mangocliff-4c9fb8c2.northeurope.azurecontainerapps.io"
+                "https://chatter.icysand-3b71e0c3.northeurope.azurecontainerapps.io"
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PATCH", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
