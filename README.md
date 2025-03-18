@@ -11,3 +11,10 @@ Full stack real time one-on-one chat application. Main goal is to practice web s
 ## Demo
 You can create a couple of accounts and try the chat features yourself (use incognito mode or 2 different browsers to login with multiple users) or search for 'otto' and send me a message!
 
+## Key Features
+- Strong user authentication and authorization
+- Real-time messaging with other users
+- See when other users are typing a message for you
+
+- ## Pictures coming soon
+
