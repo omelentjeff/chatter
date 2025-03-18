@@ -1,6 +1,7 @@
 package com.omelentjeff.chatApp.controllers;
 
 import com.omelentjeff.chatApp.dto.CreateMessageRequest;
+import com.omelentjeff.chatApp.dto.IsTypingRequest;
 import com.omelentjeff.chatApp.dto.MessageDTO;
 import com.omelentjeff.chatApp.dto.UserDTO;
 import com.omelentjeff.chatApp.services.ChatService;
@@ -43,6 +44,16 @@ public class ChatMessageController {
                 String.valueOf(savedMessage.getRecipient().getId()),
                 "/queue/new-chat",
                 savedMessage.getChat()  // Send chat details
+        );
+    }
+
+    @MessageMapping("/is-typing")
+    public void notifyIsTyping(@Payload IsTypingRequest isTypingRequest) {
+        System.out.println("Received typing request: " + isTypingRequest.isTyping());
+        messagingTemplate.convertAndSendToUser(
+                String.valueOf(isTypingRequest.getRecipientId()), // Use recipient ID
+                "/queue/is-typing",
+                isTypingRequest
         );
     }
 
