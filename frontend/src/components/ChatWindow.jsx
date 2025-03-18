@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import {
   Box,
   Paper,
@@ -15,8 +15,10 @@ export default function ChatWindow({
   message,
   setMessage,
   handleSendMessage,
+  handleIsTyping,
   connected,
   userId,
+  typingChats,
 }) {
   const messagesEndRef = useRef(null);
   const initialRenderRef = useRef(true);
@@ -24,6 +26,7 @@ export default function ChatWindow({
     ? selectedChat.users.find((user) => user.id !== userId)
     : null;
   const displayName = otherUser ? otherUser.username : "Unnamed Chat";
+  const [isTyping, setIsTyping] = useState(false);
 
   const scrollToBottom = (behavior = "smooth") => {
     if (messagesEndRef.current) {
@@ -43,6 +46,25 @@ export default function ChatWindow({
   useEffect(() => {
     initialRenderRef.current = true;
   }, [selectedChat]);
+
+  const handlerIsTyping = (typing) => {
+    if (connected && selectedChat) {
+      handleIsTyping(typing);
+    }
+  };
+
+  const handleInputChange = (e) => {
+    const text = e.target.value;
+    setMessage(text);
+
+    if (text.length > 0 && !isTyping) {
+      setIsTyping(true);
+      handlerIsTyping(true);
+    } else if (text.length === 0 && isTyping) {
+      setIsTyping(false);
+      handlerIsTyping(false);
+    }
+  };
 
   return (
     <Paper
@@ -117,13 +139,26 @@ export default function ChatWindow({
         <div ref={messagesEndRef} />
       </Box>
 
+      {selectedChat && typingChats[selectedChat.chatId] && (
+        <Typography
+          variant="caption"
+          sx={{
+            color: "gray",
+            marginBottom: "4px",
+            marginLeft: "8px",
+          }}
+        >
+          {otherUser?.username} is typing...
+        </Typography>
+      )}
+
       <form onSubmit={handleSendMessage}>
         <TextField
           label="Send a message..."
           variant="outlined"
           fullWidth
           value={message}
-          onChange={(e) => setMessage(e.target.value)}
+          onChange={handleInputChange}
           InputProps={{
             endAdornment: (
               <InputAdornment position="end">

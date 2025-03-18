@@ -20,6 +20,9 @@ export default function Home() {
     clearMessages,
     newChats,
     clearNewChats,
+    isTyping,
+    sendIsTyping,
+    typingChats,
   } = useWebSocket();
   const { userId, token, username } = useAuth();
   const [selectedChat, setSelectedChat] = useState(null);
@@ -234,7 +237,23 @@ export default function Home() {
         },
       }));
     }
+    handleIsTyping(false);
     setMessage("");
+  };
+
+  const handleIsTyping = (isTyping) => {
+    if (connected && selectedChat) {
+      const recipient = selectedChat.users.find((user) => user.id !== userId);
+
+      if (!recipient) return;
+
+      sendIsTyping("/app/is-typing", {
+        chatId: selectedChat.chatId,
+        recipientId: recipient.id,
+        senderId: userId,
+        isTyping: isTyping,
+      });
+    }
   };
 
   return (
@@ -256,6 +275,7 @@ export default function Home() {
           latestMessages={latestMessages}
           unreadCounts={unreadCounts}
           loading={loading}
+          typingChats={typingChats}
         />
       </Grid>
 
@@ -267,8 +287,10 @@ export default function Home() {
           message={message}
           setMessage={setMessage}
           handleSendMessage={handleSendMessage}
+          handleIsTyping={handleIsTyping}
           connected={connected}
           userId={userId}
+          typingChats={typingChats}
         />
       </Grid>
     </Grid>

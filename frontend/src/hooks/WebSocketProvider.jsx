@@ -2,6 +2,7 @@ import React, { createContext, useContext, useEffect, useState } from "react";
 import { over } from "stompjs";
 import SockJS from "sockjs-client";
 import { useAuth } from "./AuthProvider";
+import { set } from "lodash";
 
 const WebSocketContext = createContext();
 
@@ -12,12 +13,12 @@ export const WebSocketProvider = ({ children }) => {
   const [connected, setConnected] = useState(false);
   const [messages, setMessages] = useState([]);
   const [newChats, setNewChats] = useState([]);
+  const [isTyping, setIsTyping] = useState(false);
+  const [typingChats, setTypingChats] = useState({});
 
   useEffect(() => {
     if (userId && token) {
-      const socket = new SockJS(
-        "https://chatter-api--q83pi5q.icysand-3b71e0c3.northeurope.azurecontainerapps.io/ws"
-      );
+      const socket = new SockJS("http://localhost:8080/ws");
       const client = over(socket);
 
       client.connect(
@@ -39,7 +40,18 @@ export const WebSocketProvider = ({ children }) => {
 
             setNewChats((prevChats) => [...prevChats, newChat]);
           });
+
+          client.subscribe(`/user/${userId}/queue/is-typing`, (payload) => {
+            const message = JSON.parse(payload.body);
+            console.log("Received is-typing message:", message);
+
+            setTypingChats((prevTypingChats) => ({
+              ...prevTypingChats,
+              [message.chatId]: message.isTyping,
+            }));
+          });
         },
+
         (error) => {
           console.error("WebSocket error:", error);
           setConnected(false);
@@ -80,6 +92,15 @@ export const WebSocketProvider = ({ children }) => {
     }
   };
 
+  const sendIsTyping = (destination, content) => {
+    console.log("Sending is-typing message:", content);
+    if (connected && stompClient) {
+      stompClient.send(destination, {}, JSON.stringify(content));
+    } else {
+      console.warn("Cannot send message: WebSocket is not connected");
+    }
+  };
+
   const clearMessages = () => {
     setMessages([]);
   };
@@ -98,6 +119,9 @@ export const WebSocketProvider = ({ children }) => {
         clearMessages,
         resetWebSocketState,
         clearNewChats,
+        isTyping,
+        sendIsTyping,
+        typingChats,
       }}
     >
       {children}

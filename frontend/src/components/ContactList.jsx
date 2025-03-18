@@ -27,6 +27,7 @@ const ContactList = ({
   latestMessages,
   unreadCounts,
   loading,
+  typingChats,
 }) => {
   const { userId, username, token } = useAuth();
   const [isDialogOpen, setDialogOpen] = useState(false);
@@ -166,6 +167,7 @@ const ContactList = ({
                 : "Unnamed Chat";
               const latestMessage = latestMessages[chat.chatId];
               const unreadCount = unreadCounts[chat.chatId] || 0;
+              const isOtherUserTyping = typingChats[chat.chatId] || false;
 
               return (
                 <React.Fragment key={chat.chatId}>
@@ -209,37 +211,16 @@ const ContactList = ({
                         </Box>
                       }
                       secondary={
-                        latestMessage && latestMessage.sender ? (
-                          <Box
-                            sx={{
-                              display: "flex",
-                              justifyContent: "space-between",
-                            }}
-                          >
-                            <Typography
-                              variant="body2"
-                              color="white"
-                              sx={{
-                                display: "inline-block",
-                                maxWidth: "100%",
-                                whiteSpace: "nowrap",
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                              }}
-                            >
-                              {latestMessage.sender === username
-                                ? `You: ${latestMessage.content}`
-                                : `${latestMessage.sender}: ${latestMessage.content}`}
-                            </Typography>
-                            <Typography variant="caption" color="white">
-                              {new Date(
-                                latestMessage.createdAt
-                              ).toLocaleTimeString("en-US", {
-                                hour: "numeric",
-                                minute: "numeric",
-                              })}
-                            </Typography>
-                          </Box>
+                        isOtherUserTyping ? (
+                          <Typography variant="body2" color="lightgray">
+                            {displayName} is typing...
+                          </Typography>
+                        ) : latestMessage ? (
+                          <Typography variant="body2" color="white">
+                            {latestMessage.sender === username
+                              ? `You: ${latestMessage.content}`
+                              : `${latestMessage.sender}: ${latestMessage.content}`}
+                          </Typography>
                         ) : (
                           <Typography variant="body2" color="white">
                             No messages
