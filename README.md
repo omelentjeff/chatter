@@ -15,6 +15,7 @@ You can create a couple of accounts and try the chat features yourself (use inco
 - Strong user authentication and authorization
 - Real-time messaging with other users
 - See when other users are typing a message for you
+- User search only matches perfect usernames
 
-- ## Pictures coming soon
+## Pictures coming soon
 
