@@ -10,6 +10,7 @@ Full stack real time one-on-one chat application. Main goal is to practice web s
 
 ## Demo
 You can create a couple of accounts and try the chat features yourself (use incognito mode or 2 different browsers to login with multiple users) or search for 'otto' and send me a message!
+At the moment the app only matches username search to exact matches, so keep in mind that it is case-sensitive and doesn't auto-fill suggestions.
 
 ## Key Features
 - Strong user authentication and authorization
